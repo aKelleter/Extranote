@@ -1,0 +1,187 @@
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@300;700;900&display=swap");
+
+:root{
+    --body-backg-color: rgb(246, 255, 249);
+    --body-color: rgb(51, 51, 51);
+
+    --a-color: rgb(28, 172, 50);
+    --a-color-hover: rgb(4, 49, 68);
+
+    --apptitle-color: rgb(209, 246, 215);
+    --apptitle-border: rgb(112, 174, 116);
+
+    --shadow: rgba(39, 56, 77, 0.4);  
+    --shadow-deep: rgb(51, 51, 51); 
+
+    --appmain-color: rgb(25, 118, 31);
+
+    --apptool-backg: rgb(204, 237, 208);
+    --apptool-border: rgb(28, 172, 50);
+    --apptool-backg-hover: rgb(127, 198, 138);
+    
+
+    --form-group-backg: rgb(241, 254, 242);
+    --form-group-border: rgb(169, 238, 144);
+
+    --focus-input-border: rgba(28, 172, 50, 0.6);
+
+    --danger-color: rgb(222, 49, 49);
+
+    --h2-hover: rgb(223, 253, 225);
+}
+
+body {  
+  font-family: "Exo 2", sans-serif;
+  font-size: 1.1em;
+  background-color: var(--body-backg-color);
+  color: var(--body-color)
+}
+
+a{
+    color: var(--a-color);
+    text-decoration: none;
+}
+
+a:hover{
+    color: var(--a-color-hover);
+}
+
+h2 {
+    padding: 5px;
+}
+
+.appTitle {
+    color: var(--apptitle-color);
+    background: linear-gradient(0.30turn, rgb(125, 249, 120), rgb(25, 118, 31), rgb(119, 255, 126)); 
+    margin-top: 20px;
+    padding: 20px;
+    font-size: 5rem;
+    font-weight: 900;
+    border: 1px solid var(--apptitle-border);
+    border-radius: 7px;
+    box-shadow: 10px 5px 5px var(--shadow);
+}
+
+.rise {
+    text-shadow: -0.01em -0.01em -0.01em var(--shadow);
+	animation: rise 2s ease-in-out 0.5s forwards;   
+}
+
+@keyframes rise {
+	to {
+		text-shadow: 0.09em 0.09em 0.1em var(--shadow-deep);  
+        color: var(--apptitle-color);   
+		transform: translateY(-0.025em) translateX(0.04em);
+	}
+}
+
+.second-blink  {
+    animation-duration: 1s;
+    animation-name: blink;
+    animation-iteration-count: infinite;
+    transition: none;
+ }
+ 
+ @keyframes blink {
+   0%   { opacity:1; }
+   40%   {opacity:0; }
+   100% { opacity:1; }
+ }
+
+ .circle-published {
+    display: inline-block;
+    background: var(--a-color);
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    shape-outside: circle();
+    clip-path: circle();  
+    border: 1px solid black;
+    margin-right: 5px;
+    vertical-align: middle;
+
+}
+
+.circle-not-published {
+    display: inline-block;
+    background: var(--danger-color);
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;  
+    shape-outside: circle();
+    clip-path: circle();
+    border: 1px solid black;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+/* -- Application Rules -- */
+.appFooter {
+    margin-bottom: 25px;
+}
+
+.appInteralsInfos{
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: .900em !important;
+}
+
+.appMainColor{
+ color: var(--appmain-color);
+}
+
+.appLabel{
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--appmain-color);
+}
+
+.appPageTitle{
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--appmain-color);
+}
+
+.appTool {
+    background-color: var(--apptool-backg);
+    border: 1px solid var(--apptool-border);
+    border-radius: 5px;
+    max-height: 32px !important;
+}
+
+.appTool:hover{
+    background-color: var(--apptool-backg-hover);
+    color: var(--appmain-color);    
+}
+
+.appArticle-a:hover{
+    background-color: var(--h2-hover);
+    color: var(--body-color);
+    border-radius: 5px;
+    
+}
+
+/* -- Overload Booptsrap -- */
+
+.form-select:focus,
+.form-control:focus,
+input[type=checkbox]:focus
+{   
+  border-color: var(--focus-input-border) !important;
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.075) inset, 0 0 8px  var(--focus-input-border);
+  outline: 0 none;
+}
+
+.form-check-input:checked {
+    background-color: var(--focus-input-border) !important;
+    border-color: var(--focus-input-border) !important;
+}
+
+.form-group {
+    border-radius: 5px;
+    background-color: var(--form-group-backg);
+    padding: 5px;
+    margin: 9px 0;
+    border: 1px solid var(--form-group-border);
+    box-shadow: 0 6px 12px -2px rgb(50 50 93 / 25%), 0 3px 7px -3px rgb(0 0 0 / 30%);
+}
+
