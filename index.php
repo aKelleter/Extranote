@@ -1,14 +1,17 @@
 <?php
+    // Initialisation de la session
+    session_start();
+
     require 'conf.php';
     require 'app/functions.php';
 
-    //DEBUG// print_rr($_POST, 'POST');
-    //DEBUG// print_rr($_GET, 'GET');
+    //DEBUG// PRINTR($_POST, 'POST');
+    //DEBUG// PRINTR($_GET, 'GET');
+    //DEBUG// PRINTR($_SESSION, 'SESSION');
 
     // Initialisation des variables
     // *****************************
     $content = '';
-    $msg = '';
     
     // Gestion de l'affichage des pages
     // ********************************
@@ -21,30 +24,75 @@
     switch($page){
         case 'addnote':
             $content = HTMLAddForm();
+            $favoris = null;
+            break;
+        case 'view':
+            if(!empty($_GET['id'])){
+                $id = $_GET['id'];
+                $favori = GETFavoriteByID($id);
+                $content = HTMLViewFavorite($favori);
+                $favoris = null;
+            }else{
+                $_SESSION['msg'] = 'Erreur lors de la récupération de la note';
+                $_SESSION['msgType'] = 'danger';
+                header('Refresh:2; url=index.php?page=home');
+                $favoris = null;
+            }
+            break;
+        case 'logoff':
+            session_destroy();
+            header('Location: index.php?page=home');
             break;
         default:
-            $content = HTMLHomePage();
+            $content = HTMLListNotes();
+            $favoris = HTMLListFavorites(FAVORIS);
             break;
     }
 
     // Gestion des formulaires
     // ***********************
     if(isset($_POST['action']) && $_POST['action'] == 'addnote'){
-        if(isset($_POST['title']) && isset($_POST['content'])){
+        if(isset($_POST['title']) && isset($_POST['content']) && isset($_POST['type'])){
             $title = $_POST['title'];
             $content = $_POST['content'];
-            AddNote($title, $content);
-            header('Location: index.php?page=home&msg=Note ajoutée avec succès');
+            $type = $_POST['type'];
+            $status = ADDNoteToFile($title, $content, $type);
+            if($status === false){
+                $_SESSION['msg'] = 'Erreur lors de l\'ajout de la note';                    
+                $_SESSION['msgType'] = 'danger';
+                $_SESSION['msgHasBeenDisplayed'] = false;
+                
+            }else{
+                $_SESSION['msg'] = 'Note ajoutée avec succès';
+                $_SESSION['msgType'] = 'info';
+                $_SESSION['msgHasBeenDisplayed'] = false;
+            }   
+            
+            header('Location: index.php?page=home');
         }else{
-            $msg = 'Erreur lors de l\'ajout de la note';
+            $_SESSION['msg'] = 'Veuillez remplir tous les champs';
+            $_SESSION['msgType'] = 'danger';
+            $_SESSION['msgHasBeenDisplayed'] = false;
         }
     }
 
-     // Gestion des messages
-    // *********************
-    if(isset($_GET['msg'])){
-        $msg = $_GET['msg'];
+    
+    //DEBUG// PRINTR($_SESSION, 'SESSION AFTER POST');
+
+    // Gestion des messages
+    // ********************
+    /*
+    if(isset($_SESSION['msgHasBeenDisplayed']) && $_SESSION['msgHasBeenDisplayed'] == true){
+        // Vidage de la session
+        $_SESSION['msg'] = '';
+        $_SESSION['msgType'] = ''; 
+        $_SESSION['msgHasBeenDisplayed'] = false;
     }
+    */
+    
+    //DEBUG// PRINTR($_SESSION, 'SESSION AFTER MESSAGE');
+    
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,24 +110,32 @@
                 <h1>Extranote</h1>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12 text-center">      
-                <a href="index.php">Home</a> -
-                <a href="index.php?page=addnote">Ajouter</a>  
-            </div>
-        </div>
+        
+        <!-- Menu -->
+        <?php echo HTMLMenu(); ?>
+    
         <hr>
-
-        <!-- Affichage des messages -->
-        <?php if(!empty($msg)) echo HTMLMessage($msg); ?>    
+        
+        <!-- Affichage des messages -->       
+        <?php   
+            if(isset($_SESSION['msg']) && !empty($_SESSION['msg']))
+            {                
+                echo HTMLMessage();                   
+                $_SESSION['msg'] = '';
+                $_SESSION['msgType'] = '';                                      
+            }       
+        ?>
 
         <!-- Affichage du contenu -->
         <?php echo $content; ?>
-        
-          
 
+        <hr>
+
+        <!-- Affichage des favoris -->
+        <?php echo $favoris ?>
+        
     </div><!-- container -->     
     <!-- Footer -->
-    <?php echo HTMLFooter(); ?>      
+    <?php echo HTMLFooter(); ?>    
 </body>
 </html>
