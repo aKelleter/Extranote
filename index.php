@@ -1,20 +1,22 @@
 <?php
-    // Initialisation de la session
-    session_start();
-
+    
     require 'conf.php';
     require 'app/functions.php';
 
-    //DEBUG// PRINTR($_POST, 'POST');
+    //DEBUG// 
+    PRINTR($_POST, 'POST');
     //DEBUG// PRINTR($_GET, 'GET');
-    //DEBUG// PRINTR($_SESSION, 'SESSION');
+    //DEBUG// PRINTR($GLOBALS, 'GLOBALS');
+    
 
     // Initialisation des variables
     // *****************************
     $content = '';
-    
-    // Gestion de l'affichage des pages
-    // ********************************
+    $message = '';
+    $favoris = '';
+        
+    // Gestion de l'affichage des pages et de leur contenu
+    // ***************************************************
     if(isset($_GET['page'])){
         $page = $_GET['page'];
     }else{  
@@ -33,10 +35,11 @@
                 $content = HTMLViewFavorite($favori);
                 $favoris = null;
             }else{
-                $_SESSION['msg'] = 'Erreur lors de la récupération de la note';
-                $_SESSION['msgType'] = 'danger';
-                header('Refresh:2; url=index.php?page=home');
+                $GLOBALS['msg'] = 'Erreur lors de la récupération de la note';
+                $GLOBALS['msgType'] = 'danger';
                 $favoris = null;
+                $content = null;
+                header('Refresh:2; url=index.php?page=home');                
             }
             break;
         case 'logoff':
@@ -45,57 +48,49 @@
             break;
         default:
             $content = HTMLListNotes();
-            $favoris = HTMLListFavorites(FAVORIS);
+            $favoris = HTMLListFavorites();
             break;
     }
 
     // Gestion des formulaires
     // ***********************
-    if(isset($_POST['action']) && $_POST['action'] == 'addnote'){
+    if(isset($_POST['action']) && $_POST['action'] == 'addnote')
+    {
         if(isset($_POST['title']) && isset($_POST['content']) && isset($_POST['type'])){
-            $title = $_POST['title'];
-            $content = $_POST['content'];
-            $type = $_POST['type'];
-            $status = ADDNoteToFile($title, $content, $type);
-            if($status === false){
-                $_SESSION['msg'] = 'Erreur lors de l\'ajout de la note';                    
-                $_SESSION['msgType'] = 'danger';
-                $_SESSION['msgHasBeenDisplayed'] = false;
-                
-            }else{
-                $_SESSION['msg'] = 'Note ajoutée avec succès';
-                $_SESSION['msgType'] = 'info';
-                $_SESSION['msgHasBeenDisplayed'] = false;
-            }   
+            $note_title = $_POST['title'];
+            $note_content = $_POST['content'];
+            $note_type = $_POST['type'];
+            $note_favoris = (isset($_POST['favoris']))? $_POST['favoris'] : 0;
+            $status = ADDNoteToFile($note_title, $note_content, $note_type, $note_favoris);
             
-            header('Location: index.php?page=home');
+            if($status === false){
+                $GLOBALS['msg'] = 'Erreur lors de l\'ajout de la note';                    
+                $GLOBALS['msgType'] = 'danger';   
+                header('Refresh:2; url=index.php?page=home');                             
+            }else{
+                $GLOBALS['msg'] = 'Note ajoutée avec succès';
+                $GLOBALS['msgType'] = 'info';       
+                header('Refresh:2; url=index.php?page=home');         
+            }               
+            
         }else{
-            $_SESSION['msg'] = 'Veuillez remplir tous les champs';
-            $_SESSION['msgType'] = 'danger';
-            $_SESSION['msgHasBeenDisplayed'] = false;
+            $GLOBALS['msg'] = 'Veuillez remplir tous les champs';
+            $GLOBALS['msgType'] = 'danger';            
         }
     }
 
-    
-    //DEBUG// PRINTR($_SESSION, 'SESSION AFTER POST');
-
     // Gestion des messages
     // ********************
-    /*
-    if(isset($_SESSION['msgHasBeenDisplayed']) && $_SESSION['msgHasBeenDisplayed'] == true){
-        // Vidage de la session
-        $_SESSION['msg'] = '';
-        $_SESSION['msgType'] = ''; 
-        $_SESSION['msgHasBeenDisplayed'] = false;
-    }
-    */
-    
-    //DEBUG// PRINTR($_SESSION, 'SESSION AFTER MESSAGE');
-    
-
+    if(isset($GLOBALS['msg']) && !empty($GLOBALS['msg']))
+    {                
+        $message = HTMLMessage($GLOBALS['msg'], $GLOBALS['msgType']);                   
+        $GLOBALS['msg'] = '';
+        $GLOBALS['msgType'] = '';                                      
+    }      
+   
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -117,14 +112,7 @@
         <hr>
         
         <!-- Affichage des messages -->       
-        <?php   
-            if(isset($_SESSION['msg']) && !empty($_SESSION['msg']))
-            {                
-                echo HTMLMessage();                   
-                $_SESSION['msg'] = '';
-                $_SESSION['msgType'] = '';                                      
-            }       
-        ?>
+        <?php echo $message; ?>
 
         <!-- Affichage du contenu -->
         <?php echo $content; ?>

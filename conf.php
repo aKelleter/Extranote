@@ -1,8 +1,12 @@
 <?php
 
-// Version
-const VERSION = '0.5.0';
+// NUméro de version de l'application
+const VERSION = '0.6.0';
 
+// Répertoire de stockage des notes
+const NOTES_DIR = 'notes';
+
+// Liste des favoris
 const FAVORIS = [
     [
         'id' => 1,    

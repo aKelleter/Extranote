@@ -28,6 +28,8 @@
     --danger-color: rgb(222, 49, 49);
 
     --h2-hover: rgb(223, 253, 225);
+
+    --appNote-backg: rgb(223, 225, 210);
 }
 
 body {  
@@ -158,6 +160,16 @@ h2 {
     color: var(--body-color);
     border-radius: 5px;
     
+}
+
+.appNote {
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--appmain-color);
+    background-color: var(--appNote-backg);
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 5px;
 }
 
 /* -- Overload Booptsrap -- */

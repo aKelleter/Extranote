@@ -28,6 +28,10 @@ function HTMLAddForm(){
                                 <option value="lien">Lien</option>
                             </select>
                         </div>
+                        <div class="mb-3 form-group">                                                   
+                            <input class="form-check-input" type="checkbox" value="1" name="favoris">
+                            <label class="form-check-label" for="favoris">Ajouter aux favoris</label>
+                        </div>    
                         <div class="mb-3 form-group">
                             <label for="content" class="form-label appLabel">Contenu</label>
                             <textarea name="content" class="form-control" placeholder="Content" required></textarea>
@@ -47,24 +51,51 @@ function HTMLAddForm(){
  * @param mixed $list 
  * @return string 
  */
-function HTMLListFavorites($list)
+function HTMLListFavorites()
 {
-    $html = '<div class="row">
-                <div class="col-12">                    
-                    <h1 class="mb-3 appMainColor appPageTitle">Favoris</h1>   
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">                     
-                    <div>';
-                    foreach($list as $favori){
-                        $html .= '<div>                   
-                                        <h6 class="mb-3 appMainColor"><a href="index.php?page=view&id='.$favori['id'].'">'.$favori['title'].'</a></h6>                                                                               
-                                  </div>';
-                    }
-                    $html .='</div>
-                </div>
-            </div>';
+    $notes = GETArrayListNotes();
+    $listeNotes = '';
+    $html = '';
+    PRINTR($notes);
+    
+    
+    $html = '
+    <div class="row">
+        <div class="col-12">                    
+            <h1 class="mb-3 appMainColor appPageTitle">Favoris</h1>   
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">                     
+            <div>';
+        if(empty($notes)){
+            $html .= '<div class="alert alert-success text-center">Aucun favoris pour le moment</div>';
+        }else{                    
+            foreach($notes as $item => $value)
+            {
+                if($item['favoris'] == 1)
+                {
+                    $html .= '  
+                    <div class="row appNote">
+                        <div class="col-12">
+                            <span class="badge text-bg-secondary">'.$item['type'].'</span>                     
+                            <h2 class="mb-3 appMainColor">'.$item['title'].'</h2> 
+                            <hr> 
+                        
+                        </div>
+                        <div class="col-12">                                                  
+                            <a href="index.php?page=view&feed=note&id='.$item['filename'].'" class="btn btn-outline-primary">Voir</a>
+                        </div>
+                        <div class="col-12">  
+                            <p>'.$item['content'].'</p>                                        
+                        </div>
+                    </div>';
+                }
+               
+            }
+        }
+        $html .='</div></div></div>';
+
 
     return $html;
 }
@@ -91,19 +122,23 @@ function HTMLListNotes(){
                     <div>';
                     if(empty($notes)){
                         $html .= '<div class="alert alert-success text-center">Aucune note pour le moment</div>';
-                    }                    
-                    foreach($notes as $note){
-                        $html .= '<div class="row">
-                                    <div class="col-12">                    
-                                        <h2 class="mb-3 appMainColor">'.$note['title'].'</h2>  
-                                        <h6 class="mb-3 appMainColor">Type: <strong>'.$note['type'].'</strong></h6> 
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">  
-                                        <p>'.$note['content'].'</p>                                        
-                                    </div>
-                                </div>';
+                    }else{                    
+                        foreach($notes as $note){
+                            $html .= '  <div class="row appNote">
+                                            <div class="col-12">
+                                                <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
+                                                <h2 class="mb-3 appMainColor">'.$note['title'].'</h2> 
+                                                <hr> 
+                                               
+                                            </div>
+                                            <div class="col-12">                                                  
+                                                <a href="index.php?page=view&feed=note&id='.$note['filename'].'" class="btn btn-outline-primary">Voir</a>
+                                            </div>
+                                            <div class="col-12">  
+                                                <p>'.$note['content'].'</p>                                        
+                                            </div>
+                                        </div>';
+                        }
                     }
                     $html .='</div>
                 </div>
@@ -120,19 +155,16 @@ function HTMLListNotes(){
  * @param string $type 
  * @return string 
  */
-function HTMLMessage()
+function HTMLMessage($msg, $type = 'info')
 {
-    if(isset($_SESSION['msgType']) && !empty($_SESSION['msgType']))
-        $_SESSION['msgType'] = 'info';  
-
     $html = '
         <div class="row">
             <div class="col-12">  
             <div id="message"></div>
                 <script>
                 let div = document.createElement("div");
-                div.className = "alert alert-'.$_SESSION['msgType'].' text-center";
-                div.innerHTML = "'.$_SESSION['msg'].'";        
+                div.className = "alert alert-'.$type.' text-center";
+                div.innerHTML = "'.$msg.'";        
                 message.append(div);
                 setTimeout(() => message.remove(), 2000);
                 </script>
@@ -152,8 +184,7 @@ function HTMLMenu(){
     $html = '<div class="row">
                 <div class="col-12 text-center">      
                     <a href="index.php">Home</a> -
-                    <a href="index.php?page=addnote">Ajouter</a> -
-                    <a href="index.php?page=logoff">Logoff</a> 
+                    <a href="index.php?page=addnote">Ajouter</a>
                 </div>
             </div>';            
 
@@ -187,6 +218,9 @@ function HTMLFooter(){
  */
 function HTMLViewFavorite($favori)
 {
+    if(!$favori)
+        return '<div class="alert alert-danger text-center">Favori introuvable</div>';
+
     $html = '<div class="row">
                 <div class="col-12">                    
                     <h1 class="mb-3 appMainColor appPageTitle">'.$favori['title'].'</h1>  
@@ -220,11 +254,16 @@ function HTMLLogoff(){
  * @return array 
  */
 function GETArrayListNotes(){
-    $files = glob('datas/*.json');    
+    $files = glob(NOTES_DIR.'/*.json');    
     $notes = [];
-    foreach($files as $file){
-        $notes = array_merge($notes, json_decode(file_get_contents($file), true));
+
+    if(file_exists(NOTES_DIR))
+    {
+        foreach($files as $file){
+            $notes = array_merge($notes, json_decode(file_get_contents($file), true));
+        }
     }
+
     return $notes;
 }
 
@@ -235,14 +274,23 @@ function GETArrayListNotes(){
  * @param mixed $content 
  * @return void 
  */
-function ADDNoteToFile($title, $content, $type){
+function ADDNoteToFile($title, $content, $type, $favoris){
+    
+    $result = false;
+    $filename = NOTES_DIR.'/notes-'.date("d-m-Y").'-'.GENRandNumber(5).'.json';
+
     $note [] = [
         'title' => $title,
         'content' => $content,
-        'type' => $type
+        'type' => $type,
+        'favoris' => $favoris,
+        'filename' => $filename,
+        'date' => date("d-m-Y H:i:s")
     ];
-    $filename = 'datas/notes-'.date("d-m-Y").'-'.GENRandNumber(5).'.json';
-    $result = file_put_contents($filename, json_encode($note));   
+    
+    if(file_exists(NOTES_DIR))
+        $result = file_put_contents($filename, json_encode($note));
+    
     return $result;
 }
 
