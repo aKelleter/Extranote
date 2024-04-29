@@ -3,8 +3,7 @@
     require 'conf.php';
     require 'app/functions.php';
 
-    //DEBUG// 
-    PRINTR($_POST, 'POST');
+    //DEBUG// PRINTR($_POST, 'POST');
     //DEBUG// PRINTR($_GET, 'GET');
     //DEBUG// PRINTR($GLOBALS, 'GLOBALS');
     
@@ -29,10 +28,9 @@
             $favoris = null;
             break;
         case 'view':
-            if(!empty($_GET['id'])){
-                $id = $_GET['id'];
-                $favori = GETFavoriteByID($id);
-                $content = HTMLViewFavorite($favori);
+            if(!empty($_GET['file'])){
+                $file = $_GET['file'];                
+                $content = HTMLViewNote($file);
                 $favoris = null;
             }else{
                 $GLOBALS['msg'] = 'Erreur lors de la récupération de la note';
@@ -96,13 +94,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <title>Extra Note</title>
+    <title><?php echo APP_TITLE; ?></title>
 </head>
 <body>
     <div class="container">        
         <div class="row">
             <div class="col-12 text-center">      
-                <h1>Extranote</h1>
+                <h1><?php echo APP_NAME; ?></h1>
             </div>
         </div>
         

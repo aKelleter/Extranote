@@ -56,13 +56,11 @@ function HTMLListFavorites()
     $notes = GETArrayListNotes();
     $listeNotes = '';
     $html = '';
-    PRINTR($notes);
-    
     
     $html = '
     <div class="row">
         <div class="col-12">                    
-            <h1 class="mb-3 appMainColor appPageTitle">Favoris</h1>   
+            <h1 class="mb-3 appMainColor appPageTitle">Favoris ///</h1>   
         </div>
     </div>
     <div class="row">
@@ -71,32 +69,26 @@ function HTMLListFavorites()
         if(empty($notes)){
             $html .= '<div class="alert alert-success text-center">Aucun favoris pour le moment</div>';
         }else{                    
-            foreach($notes as $item => $value)
+            foreach($notes as $note)
             {
-                if($item['favoris'] == 1)
+                //DEBUG//PRINTR($note, 'note');
+                if($note['favoris'] == 1)
                 {
                     $html .= '  
-                    <div class="row appNote">
-                        <div class="col-12">
-                            <span class="badge text-bg-secondary">'.$item['type'].'</span>                     
-                            <h2 class="mb-3 appMainColor">'.$item['title'].'</h2> 
-                            <hr> 
-                        
-                        </div>
-                        <div class="col-12">                                                  
-                            <a href="index.php?page=view&feed=note&id='.$item['filename'].'" class="btn btn-outline-primary">Voir</a>
-                        </div>
-                        <div class="col-12">  
-                            <p>'.$item['content'].'</p>                                        
-                        </div>
-                    </div>';
+                                <a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
+                                    <div class="row appNote" alt="Lire">
+                                        
+                                            <div class="col-12">
+                                                <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
+                                                <h2 class="mb-3 appMainColor">'.$note['title'].'</h2>                                                     
+                                            </div>
+                                    </div>
+                                </a>';
                 }
                
             }
         }
         $html .='</div></div></div>';
-
-
     return $html;
 }
 
@@ -107,14 +99,14 @@ function HTMLListFavorites()
  */
 function HTMLListNotes(){
 
-    $notes = GETArrayListNotes();
+    $notes = GETArrayListNotes();      
     $listeNotes = '';
     $html = '';
     //DEBUG// PRINTR($notes, 'HTMLListNotes');
-    
+   
     $html = '<div class="row">
                 <div class="col-12">                    
-                    <h1 class="mb-3 appMainColor appPageTitle">Notes</h1>   
+                    <h1 class="mb-3 appMainColor appPageTitle">Notes ///</h1>   
                 </div>
             </div>
             <div class="row">
@@ -124,20 +116,16 @@ function HTMLListNotes(){
                         $html .= '<div class="alert alert-success text-center">Aucune note pour le moment</div>';
                     }else{                    
                         foreach($notes as $note){
-                            $html .= '  <div class="row appNote">
-                                            <div class="col-12">
-                                                <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
-                                                <h2 class="mb-3 appMainColor">'.$note['title'].'</h2> 
-                                                <hr> 
-                                               
-                                            </div>
-                                            <div class="col-12">                                                  
-                                                <a href="index.php?page=view&feed=note&id='.$note['filename'].'" class="btn btn-outline-primary">Voir</a>
-                                            </div>
-                                            <div class="col-12">  
-                                                <p>'.$note['content'].'</p>                                        
-                                            </div>
-                                        </div>';
+                            $html .= ' 
+                                    <a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
+                                        <div class="row appNote">
+                                            
+                                                <div class="col-12">
+                                                    <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
+                                                    <h2 class="mb-3 appMainColor">'.$note['title'].'</h2>                                                     
+                                                </div>
+                                        </div>
+                                    </a>';
                         }
                     }
                     $html .='</div>
@@ -201,7 +189,8 @@ function HTMLFooter(){
                 <div class="container">
                     <div class="row">
                         <div class="col-12 text-center">
-                            <p>ExtraNote - 2024 - v'.VERSION.'</p>
+                        <hr>
+                            <p>ExtraNote - 2024 - v'.APP_VERSION.' - '.APP_DATE_UPDATE.'</p>
                         </div>
                     </div>
                 </div>
@@ -216,21 +205,25 @@ function HTMLFooter(){
  * @param mixed $favori 
  * @return string 
  */
-function HTMLViewFavorite($favori)
+function HTMLViewNote($file)
 {
-    if(!$favori)
-        return '<div class="alert alert-danger text-center">Favori introuvable</div>';
+    $note = json_decode(file_get_contents($file), true);
+    $note = $note[0];
+    //DEBUG//PRINTR($note, 'note');
+
+    if(!$note)
+        return '<div class="alert alert-danger text-center">Note introuvable</div>';
 
     $html = '<div class="row">
                 <div class="col-12">                    
-                    <h1 class="mb-3 appMainColor appPageTitle">'.$favori['title'].'</h1>  
-                    <h6 class="mb-3 appMainColor">Type: <strong>'.$favori['type'].'</strong></h6> 
+                    <h1 class="mb-3 appMainColor appPageTitle">'.$note['title'].'</h1>  
+                    <h6 class="mb-3 appMainColor">Type: <strong>'.$note['type'].'</strong></h6> 
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">                     
                     <div>
-                        <p>'.$favori['content'].'</p>
+                        <p>'.$note['content'].'</p>
                     </div>
                 </div>
             </div>';
@@ -294,21 +287,6 @@ function ADDNoteToFile($title, $content, $type, $favoris){
     return $result;
 }
 
-/**
- * Récupération d'un favoris par son ID
- * 
- * @param mixed $id 
- * @return mixed 
- */
-function GETFavoriteByID($id){
-    $favoris = FAVORIS;
-    foreach($favoris as $favori){
-        if($favori['id'] == $id){
-            return $favori;
-        }
-    }
-    return null;
-}
 
 /**
  * Génération de nombre aléatoire

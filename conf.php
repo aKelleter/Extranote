@@ -1,13 +1,17 @@
 <?php
 
 // NUméro de version de l'application
-const VERSION = '0.6.0';
+const APP_VERSION = '0.7.0';
+const APP_DATE_UPDATE = '29/04/2024 22:00';
+const APP_NAME = 'ExtraNote';
+const APP_TITLE = 'ExtraNote - Gestionnaire de notes';
+
 
 // Répertoire de stockage des notes
 const NOTES_DIR = 'notes';
 
 // Liste des favoris
-const FAVORIS = [
+const NEWS = [
     [
         'id' => 1,    
         'title'=>'Charger une image en JS', 
