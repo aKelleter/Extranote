@@ -1,11 +1,16 @@
 <?php
+/**
+ * ******************************************************************
+ *  Fichier de fonctions destinées au fonctionnement de l'application
+ * ******************************************************************
+ */
 
 /**
  * Affichage du formulaire d'ajout de note
  * 
  * @return string 
  */
-function HTMLAddForm(){
+function HTMLFormAddNewNote(){
     $html = '
             <div class="row">
                 <div class="col-12">                    
@@ -17,24 +22,24 @@ function HTMLAddForm(){
                 
                     <form action="index.php" method="post">
                         <div class="mb-3 form-group">
-                            <label for="title" class="form-label appLabel">Titre</label>
-                            <input type="text" class="form-control" name="title" placeholder="Title" required>
+                            <label for="title_note" class="form-label appLabel">Titre</label>
+                            <input type="text" class="form-control" name="title_note" ide="title_note" placeholder="Title" required>
                         </div>
                         <div class="mb-3 form-group">
-                            <label for="type" class="form-label appLabel">Type</label>
-                            <select name="type" class="form-control" required>
-                                <option value="note">Note</option>
-                                <option value="code">Code</option>
-                                <option value="lien">Lien</option>
+                            <label for="type_note" class="form-label appLabel">Type</label>
+                            <select name="type_note" id="type_note" class="form-control" required>
+                                <option value="note">Note textuelle</option>
+                                <option value="code">Code Source</option>
+                                <option value="lien">Lien / Url</option>
                             </select>
                         </div>
                         <div class="mb-3 form-group">                                                   
-                            <input class="form-check-input" type="checkbox" value="1" name="favoris">
+                            <input class="form-check-input" type="checkbox" value="1" id="favori_note" name="favori_note">
                             <label class="form-check-label" for="favoris">Ajouter aux favoris</label>
                         </div>    
                         <div class="mb-3 form-group">
-                            <label for="content" class="form-label appLabel">Contenu</label>
-                            <textarea name="content" class="form-control" placeholder="Content" required></textarea>
+                            <label for="content" class="form-label appLabel" id="label_content_note">Contenu</label>
+                            <textarea name="content_note" id="content_note"class="form-control" placeholder="Content" required></textarea>
                         </div>
                         <input type="hidden" name="action" value="addnote">
                         <button type="submit" class="btn btn-outline-success">Ajouter</button>
@@ -53,11 +58,13 @@ function HTMLAddForm(){
  */
 function HTMLListFavorites()
 {
-    $notes = GETArrayListNotes();
+
+    $notes = GETArrayNotes();
     $listeNotes = '';
     $html = '';
     
     $html = '
+    <hr>
     <div class="row">
         <div class="col-12">                    
             <h1 class="mb-3 appMainColor appPageTitle">Favoris ///</h1>   
@@ -71,7 +78,7 @@ function HTMLListFavorites()
         }else{                    
             foreach($notes as $note)
             {
-                //DEBUG//PRINTR($note, 'note');
+                //DEBUG//T_Printr($note, 'note');
                 if($note['favoris'] == 1)
                 {
                     $html .= '  
@@ -99,10 +106,10 @@ function HTMLListFavorites()
  */
 function HTMLListNotes(){
 
-    $notes = GETArrayListNotes();      
+    $notes = GETArrayNotes();      
     $listeNotes = '';
     $html = '';
-    //DEBUG// PRINTR($notes, 'HTMLListNotes');
+    //DEBUG// T_Printr($notes, 'HTMLListNotes');
    
     $html = '<div class="row">
                 <div class="col-12">                    
@@ -143,7 +150,7 @@ function HTMLListNotes(){
  * @param string $type 
  * @return string 
  */
-function HTMLMessage($msg, $type = 'info')
+function HTMLInsertMessage($msg, $type = 'info')
 {
     $html = '
         <div class="row">
@@ -168,7 +175,7 @@ function HTMLMessage($msg, $type = 'info')
  * 
  * @return string 
  */
-function HTMLMenu(){
+function HTMLInsertMenu(){
     $html = '<div class="row">
                 <div class="col-12 text-center">      
                     <a href="index.php">Home</a> -
@@ -184,7 +191,7 @@ function HTMLMenu(){
  * 
  * @return string 
  */
-function HTMLFooter(){
+function HTMLInsertFooter(){
     $html = '<footer class="appFooter">
                 <div class="container">
                     <div class="row">
@@ -200,41 +207,14 @@ function HTMLFooter(){
 }
 
 /**
- * Affichage d'un favori
+ * Affichage de la bannièreµ
  * 
- * @param mixed $favori 
  * @return string 
  */
-function HTMLViewNote($file)
-{
-    $note = json_decode(file_get_contents($file), true);
-    $note = $note[0];
-    //DEBUG//PRINTR($note, 'note');
-
-    if(!$note)
-        return '<div class="alert alert-danger text-center">Note introuvable</div>';
-
-    $html = '<div class="row">
-                <div class="col-12">                    
-                    <h1 class="mb-3 appMainColor appPageTitle">'.$note['title'].'</h1>  
-                    <h6 class="mb-3 appMainColor">Type: <strong>'.$note['type'].'</strong></h6> 
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">                     
-                    <div>
-                        <p>'.$note['content'].'</p>
-                    </div>
-                </div>
-            </div>';
-
-    return $html;
-}
-
-function HTMLLogoff(){
+function HTMLInsertBanner(){
     $html = '<div class="row">
                 <div class="col-12 text-center">      
-                    <a href="index.php?page=logoff">Déconnexion</a>  
+                <h1><img src="assets/img/banner.png" class="img-fluid" alt="Logo Extra Note">'.APP_NAME.'</h1>
                 </div>
             </div>';            
 
@@ -242,11 +222,62 @@ function HTMLLogoff(){
 }
 
 /**
+ * Affichage de l'entête
+ * 
+ * @return string 
+ */
+function HTMLInsertHeader(){
+    $html = '
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="assets/css/styles.css">
+        <title>'.APP_TITLE.'</title>
+    </head>';
+
+    return $html;
+}
+
+/**
+ * Affichage d'un favori
+ * 
+ * @param mixed $favori 
+ * @return string 
+ */
+function HTMLDisplayNote($file)
+{
+    $note = json_decode(file_get_contents($file), true);
+    $note = $note[0];
+    //DEBUG//T_Printr($note, 'note');
+
+    if(!$note)
+        return '<div class="alert alert-danger text-center">Note introuvable</div>';
+
+    $html = '<div class="row">
+                <div class="col-4 appViewNote">                    
+                    <h1 class="mb-3 appMainColor appPageTitle">'.$note['title'].'</h1>  
+                    <hr>
+                    <h6 class="mb-3 appMainColor"><span class="">Type</span>: <strong>'.$note['type'].'</strong></h6> 
+                    <h6 class="mb-3 appMainColor"><span class="">Date</span>: <strong>'.$note['date'].'</strong></h6>
+                </div>   
+                <div class="col-1"></div> 
+                <div class="col-7 appViewNote">                     
+                    <div>
+                        <p>'.$note['content'].'</p>
+                    </div>
+                </div>
+            </div>';
+    return $html;
+}
+
+/**
  * Récupération de la liste des notes
  * 
- * @return array 
+ * @return array|empty
  */
-function GETArrayListNotes(){
+function GETArrayNotes(){
     $files = glob(NOTES_DIR.'/*.json');    
     $notes = [];
 
@@ -267,10 +298,10 @@ function GETArrayListNotes(){
  * @param mixed $content 
  * @return void 
  */
-function ADDNoteToFile($title, $content, $type, $favoris){
+function ADDNewNoteToFile($title, $content, $type, $favoris){
     
     $result = false;
-    $filename = NOTES_DIR.'/notes-'.date("d-m-Y").'-'.GENRandNumber(5).'.json';
+    $filename = NOTES_DIR.'/notes-'.date("d-m-Y").'-'.T_RandNumber(5).'.json';
 
     $note [] = [
         'title' => $title,
@@ -280,43 +311,19 @@ function ADDNoteToFile($title, $content, $type, $favoris){
         'filename' => $filename,
         'date' => date("d-m-Y H:i:s")
     ];
+
+    // Traitement du contenu en fonction du type
+    switch($type){        
+        case 'code':
+            $note[0]['content'] = '<pre><code>'.$note[0]['content'].'</code></pre>';
+            break;
+        case 'lien':
+            $note[0]['content'] = '<a href="'.$note[0]['content'].'" target="_blank">'.$note[0]['content'].'</a>';
+            break;
+    }   
     
     if(file_exists(NOTES_DIR))
         $result = file_put_contents($filename, json_encode($note));
     
     return $result;
-}
-
-
-/**
- * Génération de nombre aléatoire
- * 
- * @param int $e 
- * @return string 
- */
-function GENRandNumber($e = 4)
-{
-    $nrand = '';
-    for($i=0;$i<$e;$i++)
-    {
-        $nrand .= mt_rand(1, 9);
-    }
-   
-    return $nrand;
-}
-
-/**
- * Affichage d'un tableau
- * 
- * @param mixed $data 
- * @param mixed $tile 
- * @return void 
- */
-function PRINTR($data, $tile = null){
-    if($tile)
-        echo '<h2>'.$tile.'</h2>';
-    
-    echo '<pre>';
-    print_r($data);
-    echo '</pre>';
 }

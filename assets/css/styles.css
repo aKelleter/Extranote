@@ -7,6 +7,8 @@
     --a-color: rgb(28, 172, 50);
     --a-color-hover: rgb(4, 49, 68);
 
+    --h2-hover: rgb(223, 253, 225);
+
     --apptitle-color: rgb(209, 246, 215);
     --apptitle-border: rgb(112, 174, 116);
 
@@ -25,14 +27,21 @@
 
     --focus-input-border: rgba(28, 172, 50, 0.6);
 
-    --danger-color: rgb(222, 49, 49);
-
-    --h2-hover: rgb(223, 253, 225);
+    --danger-color: rgb(222, 49, 49);    
 
     --appNote-backg: rgb(247, 252, 236);
     --appNote-border: rgb(134, 151, 128);  
     --appNoteBox-hover: rgb(160, 220, 164); 
+
+    --code-backg: rgb(237, 255, 199);  
+    --code-border: rgb(204, 217, 200); 
+
 }
+
+
+/* *********************** */
+/* --  Elements Rules  --  */
+/* *********************** */
 
 body {  
   font-family: "Exo 2", sans-serif;
@@ -54,7 +63,22 @@ h2 {
     padding: 5px;
 }
 
-.appTitle {
+code {
+    display: block;
+    font-size: 1.1rem;   
+    color: var(--body-color);
+    background-color: var(--code-backg);
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid var(--code-border);
+    border-radius: 5px;   
+}
+
+/* *********************** */
+/* -- Application Rules -- */
+/* *********************** */
+
+ .appTitle {
     color: var(--apptitle-color);
     background: linear-gradient(0.30turn, rgb(125, 249, 120), rgb(25, 118, 31), rgb(119, 255, 126)); 
     margin-top: 20px;
@@ -66,67 +90,8 @@ h2 {
     box-shadow: 10px 5px 5px var(--shadow);
 }
 
-.rise {
-    text-shadow: -0.01em -0.01em -0.01em var(--shadow);
-	animation: rise 2s ease-in-out 0.5s forwards;   
-}
-
-@keyframes rise {
-	to {
-		text-shadow: 0.09em 0.09em 0.1em var(--shadow-deep);  
-        color: var(--apptitle-color);   
-		transform: translateY(-0.025em) translateX(0.04em);
-	}
-}
-
-.second-blink  {
-    animation-duration: 1s;
-    animation-name: blink;
-    animation-iteration-count: infinite;
-    transition: none;
- }
- 
- @keyframes blink {
-   0%   { opacity:1; }
-   40%   {opacity:0; }
-   100% { opacity:1; }
- }
-
- .circle-published {
-    display: inline-block;
-    background: var(--a-color);
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    shape-outside: circle();
-    clip-path: circle();  
-    border: 1px solid black;
-    margin-right: 5px;
-    vertical-align: middle;
-
-}
-
-.circle-not-published {
-    display: inline-block;
-    background: var(--danger-color);
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;  
-    shape-outside: circle();
-    clip-path: circle();
-    border: 1px solid black;
-    margin-right: 5px;
-    vertical-align: middle;
-}
-/* -- Application Rules -- */
 .appFooter {
     margin: 25px 0 25px 0;    
-}
-
-.appInteralsInfos{
-    margin-top: 10px;
-    margin-bottom: 20px;
-    font-size: .900em !important;
 }
 
 .appMainColor{
@@ -157,12 +122,6 @@ h2 {
     color: var(--appmain-color);    
 }
 
-.appArticle-a:hover{
-    background-color: var(--h2-hover);
-    color: var(--body-color);
-    border-radius: 5px;
-    
-}
 .appNoteBox {
  display: inline-block;
  margin: 15px;
@@ -184,7 +143,18 @@ h2 {
     color: var(--body-color);
 }
 
-/* -- Overload Booptsrap -- */
+.appViewNote {
+    font-size: 1.1rem;    
+    color: var(--appmain-color);
+    background-color: var(--appNote-backg);    
+    padding: 10px;
+    border: 1px solid var(--appNote-border);
+    border-radius: 5px;
+}
+
+/* *********************** */
+/* --    Forms  Rules   -- */
+/* *********************** */
 
 .form-select:focus,
 .form-control:focus,

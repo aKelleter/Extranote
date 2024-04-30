@@ -1,11 +1,12 @@
 <?php
     
     require 'conf.php';
-    require 'app/functions.php';
+    require 'app/fcts-tools.php';
+    require 'app/fcts-app.php';
 
-    //DEBUG// PRINTR($_POST, 'POST');
-    //DEBUG// PRINTR($_GET, 'GET');
-    //DEBUG// PRINTR($GLOBALS, 'GLOBALS');
+    //DEBUG// T_Printr($_POST, 'POST');
+    //DEBUG// T_Printr($_GET, 'GET');
+    //DEBUG// T_Printr($GLOBALS, 'GLOBALS');
     
 
     // Initialisation des variables
@@ -24,13 +25,13 @@
 
     switch($page){
         case 'addnote':
-            $content = HTMLAddForm();
+            $content = HTMLFormAddNewNote();
             $favoris = null;
             break;
         case 'view':
             if(!empty($_GET['file'])){
                 $file = $_GET['file'];                
-                $content = HTMLViewNote($file);
+                $content = HTMLDisplayNote($file);
                 $favoris = null;
             }else{
                 $GLOBALS['msg'] = 'Erreur lors de la récupération de la note';
@@ -54,12 +55,12 @@
     // ***********************
     if(isset($_POST['action']) && $_POST['action'] == 'addnote')
     {
-        if(isset($_POST['title']) && isset($_POST['content']) && isset($_POST['type'])){
-            $note_title = $_POST['title'];
-            $note_content = $_POST['content'];
-            $note_type = $_POST['type'];
-            $note_favoris = (isset($_POST['favoris']))? $_POST['favoris'] : 0;
-            $status = ADDNoteToFile($note_title, $note_content, $note_type, $note_favoris);
+        if(isset($_POST['title_note']) && isset($_POST['content_note']) && isset($_POST['type_note'])){
+            $note_title = $_POST['title_note'];
+            $note_content = $_POST['content_note'];
+            $note_type = $_POST['type_note'];
+            $note_favori = (isset($_POST['favori_note']))? $_POST['favori_note'] : 0;
+            $status = ADDNewNoteToFile($note_title, $note_content, $note_type, $note_favori);
             
             if($status === false){
                 $GLOBALS['msg'] = 'Erreur lors de l\'ajout de la note';                    
@@ -81,7 +82,7 @@
     // ********************
     if(isset($GLOBALS['msg']) && !empty($GLOBALS['msg']))
     {                
-        $message = HTMLMessage($GLOBALS['msg'], $GLOBALS['msgType']);                   
+        $message = HTMLInsertMessage($GLOBALS['msg'], $GLOBALS['msgType']);                   
         $GLOBALS['msg'] = '';
         $GLOBALS['msgType'] = '';                                      
     }      
@@ -89,23 +90,14 @@
 ?>
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <title><?php echo APP_TITLE; ?></title>
-</head>
+    <?php echo HTMLInsertHeader(); ?>
 <body>
     <div class="container">        
-        <div class="row">
-            <div class="col-12 text-center">      
-                <h1><?php echo APP_NAME; ?></h1>
-            </div>
-        </div>
+        <!-- Banner -->
+        <?php echo HTMLInsertBanner(); ?>
         
         <!-- Menu -->
-        <?php echo HTMLMenu(); ?>
+        <?php echo HTMLInsertMenu(); ?>
     
         <hr>
         
@@ -114,14 +106,13 @@
 
         <!-- Affichage du contenu -->
         <?php echo $content; ?>
-
-        <hr>
-
+        
         <!-- Affichage des favoris -->
         <?php echo $favoris ?>
         
     </div><!-- container -->     
     <!-- Footer -->
-    <?php echo HTMLFooter(); ?>    
+    <?php echo HTMLInsertFooter(); ?>    
+    <script src="assets/js/app.js"></script>
 </body>
 </html>
