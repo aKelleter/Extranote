@@ -1,8 +1,8 @@
 <?php
 
 // NUméro de version de l'application
-const APP_VERSION = '0.8.0';
-const APP_DATE_UPDATE = '30/04/2024 16:30';
+const APP_VERSION = '0.9.0';
+const APP_DATE_UPDATE = '01/05/2024 17:30';
 const APP_NAME = 'ExtraNote';
 const APP_TITLE = 'ExtraNote - Gestionnaire de notes';
 

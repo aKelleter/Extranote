@@ -1,15 +1,15 @@
 
 /**
- * Fonction qui remplace le textarea du formulaired'ajout par un input de type url
+ * Fonction qui remplace le textarea du formulaire d'ajout par un input de type url
  */
 function replaceTextareaByInput() {
     let textarea = document.getElementById('content_note');
     let input = document.createElement('input');
     input.className = "form-control";
-    input.type = "text";
+    input.type = "url";
     input.name = "content_note";
     input.id = "content_note";
-    input.placeholder = "Entrez un 'Lien' ou une 'URL' valide : http(s)://...";
+    input.placeholder = "Entrez un \"Lien\" ou \"URL\" valide qui commence par: http(s)://...";
     input.required = true;
     input.pattern = "https?://.+"; // Regex pour vérifier si l'url est valide
     textarea.after(input);

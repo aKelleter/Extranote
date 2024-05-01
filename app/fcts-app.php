@@ -35,11 +35,11 @@ function HTMLFormAddNewNote(){
                         </div>
                         <div class="mb-3 form-group">                                                   
                             <input class="form-check-input" type="checkbox" value="1" id="favori_note" name="favori_note">
-                            <label class="form-check-label" for="favoris">Ajouter aux favoris</label>
+                            <label class="form-check-label" for="favori_note">Ajouter aux favoris</label>
                         </div>    
                         <div class="mb-3 form-group">
                             <label for="content" class="form-label appLabel" id="label_content_note">Contenu</label>
-                            <textarea name="content_note" id="content_note"class="form-control" placeholder="Content" required></textarea>
+                            <textarea name="content_note" id="content_note"class="form-control" placeholder="Content" rows="10" required></textarea>
                         </div>
                         <input type="hidden" name="action" value="addnote">
                         <button type="submit" class="btn btn-outline-success">Ajouter</button>
@@ -82,15 +82,15 @@ function HTMLListFavorites()
                 if($note['favoris'] == 1)
                 {
                     $html .= '  
-                                <a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
-                                    <div class="row appNote" alt="Lire">
-                                        
-                                            <div class="col-12">
-                                                <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
-                                                <h2 class="mb-3 appMainColor">'.$note['title'].'</h2>                                                     
-                                            </div>
-                                    </div>
-                                </a>';
+                    <a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
+                        <div class="row appNote" alt="Lire">
+                            
+                                <div class="col-12">
+                                    <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
+                                    <h2 class="mb-3 appMainColor">'.$note['title'].'</h2>                                                     
+                                </div>
+                        </div>
+                    </a>';
                 }
                
             }
@@ -111,34 +111,34 @@ function HTMLListNotes(){
     $html = '';
     //DEBUG// T_Printr($notes, 'HTMLListNotes');
    
-    $html = '<div class="row">
-                <div class="col-12">                    
-                    <h1 class="mb-3 appMainColor appPageTitle">Notes ///</h1>   
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">                     
-                    <div>';
-                    if(empty($notes)){
-                        $html .= '<div class="alert alert-success text-center">Aucune note pour le moment</div>';
-                    }else{                    
-                        foreach($notes as $note){
-                            $html .= ' 
-                                    <a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
-                                        <div class="row appNote">
-                                            
-                                                <div class="col-12">
-                                                    <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
-                                                    <h2 class="mb-3 appMainColor">'.$note['title'].'</h2>                                                     
-                                                </div>
-                                        </div>
-                                    </a>';
-                        }
-                    }
-                    $html .='</div>
-                </div>
-            </div>';
-            
+    $html = '
+    <div class="row">
+        <div class="col-12">                    
+            <h1 class="mb-3 appMainColor appPageTitle">Notes ///</h1>   
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">                     
+            <div>';
+            if(empty($notes)){
+                $html .= '<div class="alert alert-success text-center">Aucune note pour le moment</div>';
+            }else{                    
+                foreach($notes as $note){
+                    $html .= ' 
+                    <a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
+                        <div class="row appNote">
+                            
+                                <div class="col-12">
+                                    <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
+                                    <h2 class="mb-3 appMainColor">'.$note['title'].'</h2>                                                     
+                                </div>
+                        </div>
+                    </a>';
+                }
+            }
+            $html .='</div>
+        </div>
+    </div>';           
 
     return $html;
 }   

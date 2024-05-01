@@ -1,5 +1,7 @@
 <?php
-    
+// *******************************************************
+// --                    CONTROLLER                     --
+// *******************************************************
     require 'conf.php';
     require 'app/fcts-tools.php';
     require 'app/fcts-app.php';
@@ -11,7 +13,7 @@
 
     // Initialisation des variables
     // *****************************
-    $content = '';
+    $notes = '';
     $message = '';
     $favoris = '';
         
@@ -25,19 +27,19 @@
 
     switch($page){
         case 'addnote':
-            $content = HTMLFormAddNewNote();
+            $notes = HTMLFormAddNewNote();
             $favoris = null;
             break;
         case 'view':
             if(!empty($_GET['file'])){
                 $file = $_GET['file'];                
-                $content = HTMLDisplayNote($file);
+                $notes = HTMLDisplayNote($file);
                 $favoris = null;
             }else{
                 $GLOBALS['msg'] = 'Erreur lors de la récupération de la note';
                 $GLOBALS['msgType'] = 'danger';
                 $favoris = null;
-                $content = null;
+                $notes = null;
                 header('Refresh:2; url=index.php?page=home');                
             }
             break;
@@ -46,7 +48,7 @@
             header('Location: index.php?page=home');
             break;
         default:
-            $content = HTMLListNotes();
+            $notes = HTMLListNotes();
             $favoris = HTMLListFavorites();
             break;
     }
@@ -86,7 +88,9 @@
         $GLOBALS['msg'] = '';
         $GLOBALS['msgType'] = '';                                      
     }      
-   
+// *******************************************************
+// --                      VIEW                         --
+// *******************************************************       
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -98,21 +102,23 @@
         
         <!-- Menu -->
         <?php echo HTMLInsertMenu(); ?>
-    
-        <hr>
+        <hr>        
         
         <!-- Affichage des messages -->       
         <?php echo $message; ?>
 
-        <!-- Affichage du contenu -->
-        <?php echo $content; ?>
+        <!-- Affichage des notes -->
+        <?php echo $notes; ?>
         
         <!-- Affichage des favoris -->
         <?php echo $favoris ?>
         
     </div><!-- container -->     
+    
     <!-- Footer -->
     <?php echo HTMLInsertFooter(); ?>    
+
+    <!-- Scripts -->
     <script src="assets/js/app.js"></script>
 </body>
 </html>
