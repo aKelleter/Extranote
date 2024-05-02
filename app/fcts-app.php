@@ -374,53 +374,6 @@ function GETArrayNotes(){
 }
 
 /**
- * Affichage de la liste des notes
- * 
- * @param mixed $title 
- * @param mixed $content 
- * @return void 
- */
-function ADDNewNoteToFile($title, $content, $type, $favoris){
-    
-    $result = false;
-    $filename = NOTES_DIR.'/notes-'.date("d-m-Y").'-'.T_RandNumber(5).'.json';
-
-    $note [] = [
-        'title' => $title,
-        'content' => $content,
-        'type' => $type,
-        'favoris' => $favoris,
-        'filename' => $filename,
-        'date' => date("d-m-Y H:i:s")
-    ];
-
-    // Traitement du contenu en fonction du type
-    switch($type){        
-        case 'code':
-            $note[0]['content'] = '<pre><code>'.$note[0]['content'].'</code></pre>';
-            break;
-        case 'lien':
-            $note[0]['content'] = '<a href="'.$note[0]['content'].'" target="_blank">'.$note[0]['content'].'</a>';
-            break;
-    }   
-    
-    if(file_exists(NOTES_DIR))
-        $result = file_put_contents($filename, json_encode($note));
-    
-    return $result;
-}
-
-/**
- * Suppression d'une note
- * 
- * @param mixed $file 
- * @return bool 
- */
-function DELETENoteFile($file){
-    return unlink($file);
-}
-
-/**
  * Système de tri des notes
  * 
  * @param string $term 
@@ -469,3 +422,52 @@ function GETNotesSortedBy($listNotes, $term = SORT_BY_DEFAULT, $order = SORT_ORD
    
     return $listNotes;
 }
+
+
+/**
+ * Affichage de la liste des notes
+ * 
+ * @param mixed $title 
+ * @param mixed $content 
+ * @return void 
+ */
+function ADDNewNoteToFile($title, $content, $type, $favoris){
+    
+    $result = false;
+    $filename = NOTES_DIR.'/notes-'.date("d-m-Y").'-'.T_RandNumber(5).'.json';
+
+    $note [] = [
+        'title' => $title,
+        'content' => $content,
+        'type' => $type,
+        'favoris' => $favoris,
+        'filename' => $filename,
+        'date' => date("d-m-Y H:i:s")
+    ];
+
+    // Traitement du contenu en fonction du type
+    switch($type){        
+        case 'code':
+            $note[0]['content'] = '<pre><code>'.$note[0]['content'].'</code></pre>';
+            break;
+        case 'lien':
+            $note[0]['content'] = '<a href="'.$note[0]['content'].'" target="_blank">'.$note[0]['content'].'</a>';
+            break;
+    }   
+    
+    if(file_exists(NOTES_DIR))
+        $result = file_put_contents($filename, json_encode($note));
+    
+    return $result;
+}
+
+/**
+ * Suppression d'une note
+ * 
+ * @param mixed $file 
+ * @return bool 
+ */
+function DELETENoteFile($file){
+    return unlink($file);
+}
+
