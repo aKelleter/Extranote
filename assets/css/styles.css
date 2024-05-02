@@ -29,6 +29,9 @@
 
     --danger-color: rgb(222, 49, 49);    
 
+    --badge-color: rgb(25, 118, 31);
+    --badge-backg: rgb(209, 246, 215);
+
     --appNote-backg: rgb(247, 252, 236);
     --appNote-border: rgb(134, 151, 128);  
     --appNoteBox-hover: rgb(160, 220, 164); 
@@ -79,15 +82,21 @@ input:invalid {
     border: 2px dashed var(--danger-color);
 }
 
+small {
+    font-size: 0.7rem;
+    color: var(--body-color);
+}
+
 ::placeholder {
     color: var(--form-Placeholder-color) !important;
 }
+
 
 /* *********************** */
 /* -- Application Rules -- */
 /* *********************** */
 
- .appTitle {
+.appTitle {
     color: var(--apptitle-color);
     background: linear-gradient(0.30turn, rgb(125, 249, 120), rgb(25, 118, 31), rgb(119, 255, 126)); 
     margin-top: 20px;
@@ -147,6 +156,33 @@ input:invalid {
     padding: 10px;
     border: 1px solid var(--appNote-border);
     border-radius: 5px;
+}
+
+.badge {
+    background-color: var(--badge-backg) !important;
+    color: var(--badge-color) !important;
+}
+
+.label_sort_note {
+    font-size: 0.8rem;
+}
+
+.select_sort_note, .select_sort_order {
+    font-size: 0.8rem; 
+    background-color: var(--appNote-backg); 
+    border: 1px solid var(--appNote-border); 
+    border-radius: 5px;         
+}
+
+.btn-note-delete {
+    --bs-btn-padding-y: .25rem; 
+    --bs-btn-padding-x: .5rem; 
+    --bs-btn-font-size: .75rem;
+}
+
+.section_note {
+    background-image: url("../img/section.png");
+    
 }
 
 /* *********************** */

@@ -16,7 +16,18 @@
     $notes = '';
     $message = '';
     $favoris = '';
-        
+    $sort_note = SORT_BY_DEFAULT;
+    $sort_order = SORT_ORDER_DEFAULT;
+
+    // Tri des notes
+    // *************
+    if(isset($_POST['sort_note']) && !empty($_POST['sort_note'])){
+        $sort_note = $_POST['sort_note'];
+    }
+    if(isset($_POST['sort_order']) && !empty($_POST['sort_order'])){
+        $sort_order = $_POST['sort_order'];
+    }
+            
     // Gestion de l'affichage des pages et de leur contenu
     // ***************************************************
     if(isset($_GET['page'])){
@@ -33,7 +44,7 @@
         case 'view':
             if(!empty($_GET['file'])){
                 $file = $_GET['file'];                
-                $notes = HTMLDisplayNote($file);
+                $notes = HTMLViewNote($file);
                 $favoris = null;
             }else{
                 $GLOBALS['msg'] = 'Erreur lors de la récupération de la note';
@@ -43,42 +54,66 @@
                 header('Refresh:2; url=index.php?page=home');                
             }
             break;
-        case 'logoff':
-            session_destroy();
-            header('Location: index.php?page=home');
+        case 'confirm':
+            $notes = HTMLInsertConfirmationBox("Souhaitez-vous vraiment supprimer cette note ?");
+            break;
+        case 'delete':
+            if(!empty($_GET['file'])){
+                
+                $file = $_GET['file'];                
+                $status = DELETENoteFile($file);                
+
+                if($status === false){
+                    $GLOBALS['msg'] = 'Erreur lors de la suppression de la note';
+                    $GLOBALS['msgType'] = 'danger';
+                    header('Refresh:2; url=index.php?page=home');                    
+                }else{
+                    $GLOBALS['msg'] = 'Note supprimée avec succès';
+                    $GLOBALS['msgType'] = 'info';
+                    header('Refresh:2; url=index.php?page=home');                    
+                }
+
+            }else{
+                $GLOBALS['msg'] = 'Erreur lors de la récupération de la note';
+                $GLOBALS['msgType'] = 'danger';
+                header('Refresh:2; url=index.php?page=home');                
+            }
             break;
         default:
-            $notes = HTMLListNotes();
-            $favoris = HTMLListFavorites();
+            $notes = HTMLViewListNotes($sort_note, $sort_order);
+            $favoris = HTMLViewListFavorites();
             break;
     }
 
     // Gestion des formulaires
     // ***********************
-    if(isset($_POST['action']) && $_POST['action'] == 'addnote')
-    {
-        if(isset($_POST['title_note']) && isset($_POST['content_note']) && isset($_POST['type_note'])){
-            $note_title = $_POST['title_note'];
-            $note_content = $_POST['content_note'];
-            $note_type = $_POST['type_note'];
-            $note_favori = (isset($_POST['favori_note']))? $_POST['favori_note'] : 0;
-            $status = ADDNewNoteToFile($note_title, $note_content, $note_type, $note_favori);
-            
-            if($status === false){
-                $GLOBALS['msg'] = 'Erreur lors de l\'ajout de la note';                    
-                $GLOBALS['msgType'] = 'danger';   
-                header('Refresh:2; url=index.php?page=home');                             
+        // Ajout d'une note
+        // ****************
+        if(isset($_POST['action']) && $_POST['action'] == 'addnote')
+        {
+            if(isset($_POST['title_note']) && isset($_POST['content_note']) && isset($_POST['type_note'])){
+                $note_title = $_POST['title_note'];
+                $note_content = $_POST['content_note'];
+                $note_type = $_POST['type_note'];
+                $note_favori = (isset($_POST['favori_note']))? $_POST['favori_note'] : 0;
+                $status = ADDNewNoteToFile($note_title, $note_content, $note_type, $note_favori);
+                
+                if($status === false){
+                    $GLOBALS['msg'] = 'Erreur lors de l\'ajout de la note';                    
+                    $GLOBALS['msgType'] = 'danger';   
+                    header('Refresh:2; url=index.php?page=home');                             
+                }else{
+                    $GLOBALS['msg'] = 'Note ajoutée avec succès';
+                    $GLOBALS['msgType'] = 'info';       
+                    header('Refresh:2; url=index.php?page=home');         
+                }               
+                
             }else{
-                $GLOBALS['msg'] = 'Note ajoutée avec succès';
-                $GLOBALS['msgType'] = 'info';       
-                header('Refresh:2; url=index.php?page=home');         
-            }               
-            
-        }else{
-            $GLOBALS['msg'] = 'Veuillez remplir tous les champs';
-            $GLOBALS['msgType'] = 'danger';            
+                $GLOBALS['msg'] = 'Veuillez remplir tous les champs';
+                $GLOBALS['msgType'] = 'danger';            
+            }
         }
-    }
+        
 
     // Gestion des messages
     // ********************

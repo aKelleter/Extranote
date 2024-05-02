@@ -20,7 +20,7 @@ function HTMLFormAddNewNote(){
             <div class="row">
                 <div class="col-12">                    
                 
-                    <form action="index.php" method="post">
+                    <form id="form_add_note" action="index.php" method="post">
                         <div class="mb-3 form-group">
                             <label for="title_note" class="form-label appLabel">Titre</label>
                             <input type="text" class="form-control" name="title_note" ide="title_note" placeholder="Title" required>
@@ -56,43 +56,41 @@ function HTMLFormAddNewNote(){
  * @param mixed $list 
  * @return string 
  */
-function HTMLListFavorites()
+function HTMLViewListFavorites()
 {
-
-    $notes = GETArrayNotes();
-    $listeNotes = '';
+    // Intialisation des variables
+    $notes = '';
+    $sortedNotes = '';
     $html = '';
-    
+
+    // Acquisition et tri des notes
+    $notes = GETArrayNotes();
+    $sortedNotes = GETNotesSortedBy($notes, SORT_BY_FAVORIS);
+        
     $html = '
     <hr>
     <div class="row">
         <div class="col-12">                    
-            <h1 class="mb-3 appMainColor appPageTitle">Favoris ///</h1>   
+            <h1 class="mb-3 appMainColor appPageTitle">Favoris <img src="assets/img/section.png"></h1>   
         </div>
     </div>
     <div class="row">
         <div class="col-12">                     
             <div>';
-        if(empty($notes)){
+        if(empty($sortedNotes)){
             $html .= '<div class="alert alert-success text-center">Aucun favoris pour le moment</div>';
         }else{                    
-            foreach($notes as $note)
-            {
-                //DEBUG//T_Printr($note, 'note');
-                if($note['favoris'] == 1)
-                {
+            foreach($sortedNotes as $note)
+            {                
                     $html .= '  
                     <a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
-                        <div class="row appNote" alt="Lire">
-                            
+                        <div class="row appNote" alt="Lire">                            
                                 <div class="col-12">
                                     <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
                                     <h2 class="mb-3 appMainColor">'.$note['title'].'</h2>                                                     
                                 </div>
                         </div>
-                    </a>';
-                }
-               
+                    </a>';               
             }
         }
         $html .='</div></div></div>';
@@ -104,33 +102,40 @@ function HTMLListFavorites()
  * 
  * @return string 
  */
-function HTMLListNotes(){
+function HTMLViewListNotes($sorted_by, $order){
 
-    $notes = GETArrayNotes();      
-    $listeNotes = '';
+    // Intialisation des variables
+    $notes = '';
+    $sortedNotes = '';
     $html = '';
-    //DEBUG// T_Printr($notes, 'HTMLListNotes');
-   
+
+    // Acquisition et tri des notes
+    $notes = GETArrayNotes();
+    $sortedNotes = GETNotesSortedBy($notes, $sorted_by, $order);
+    //DEBUG// T_Printr($sortedNotes, 'HTMLListNotes'); die();
+
     $html = '
     <div class="row">
         <div class="col-12">                    
-            <h1 class="mb-3 appMainColor appPageTitle">Notes ///</h1>   
+            <h1 class="mb-3 appMainColor appPageTitle">Notes <img src="assets/img/section.png"></h1>   
         </div>
-    </div>
+    </div>'
+        .HTMLInsertFormSortNote($sorted_by, $order).'
     <div class="row">
         <div class="col-12">                     
             <div>';
-            if(empty($notes)){
+            if(empty($sortedNotes)){
                 $html .= '<div class="alert alert-success text-center">Aucune note pour le moment</div>';
             }else{                    
-                foreach($notes as $note){
+                foreach($sortedNotes as $note){
                     $html .= ' 
                     <a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
                         <div class="row appNote">
                             
                                 <div class="col-12">
                                     <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
-                                    <h2 class="mb-3 appMainColor">'.$note['title'].'</h2>                                                     
+                                    <h2 class="mb-3 appMainColor">'.$note['title'].'</h2> 
+                                    <small>'.$note['date'].'</small>                                                  
                                 </div>
                         </div>
                     </a>';
@@ -165,6 +170,26 @@ function HTMLInsertMessage($msg, $type = 'info')
                 </script>
             </div>
         </div>
+    '; 
+    
+    return $html;
+}
+
+/**
+ * Affichage une boite de confirmation
+ * 
+ * @return string 
+ */
+function HTMLInsertConfirmationBox($msg)
+{
+    $html = '
+    <div class="row">
+        <div class="col-12 text-center">  
+            <div class="alert alert-warning">'.$msg.'</div>
+            <a href="index.php?page=home" class="btn btn-outline-success">Annuler</a>
+            <a href="index.php?page=delete&file='.$_GET['file'].'" class="btn btn-outline-danger">Confirmer</a>
+        </div>                     
+    </div>
     '; 
     
     return $html;
@@ -246,7 +271,7 @@ function HTMLInsertHeader(){
  * @param mixed $favori 
  * @return string 
  */
-function HTMLDisplayNote($file)
+function HTMLViewNote($file)
 {
     $note = json_decode(file_get_contents($file), true);
     $note = $note[0];
@@ -259,8 +284,9 @@ function HTMLDisplayNote($file)
                 <div class="col-4 appViewNote">                    
                     <h1 class="mb-3 appMainColor appPageTitle">'.$note['title'].'</h1>  
                     <hr>
-                    <h6 class="mb-3 appMainColor"><span class="">Type</span>: <strong>'.$note['type'].'</strong></h6> 
-                    <h6 class="mb-3 appMainColor"><span class="">Date</span>: <strong>'.$note['date'].'</strong></h6>
+                    <h6 class="mb-3 appMainColor"><span class=""><span class="badge">'.$note['type'].'</span></h6> 
+                    <h6 class="mb-3 appMainColor"><span class="">'.$note['date'].'</span></h6>
+                    <a href="index.php?page=confirm&file='.$note['filename'].'" class="btn btn-outline-danger btn-sm btn-note-delete" title="Supprimer"> X </a>
                 </div>   
                 <div class="col-1"></div> 
                 <div class="col-7 appViewNote">                     
@@ -269,6 +295,62 @@ function HTMLDisplayNote($file)
                     </div>
                 </div>
             </div>';
+    return $html;
+}
+
+/**
+ * Affichage du formulaire de tri des notes
+ * 
+ * @param string $sorted_by 
+ * @return string 
+ */
+function HTMLInsertFormSortNote($sorted_by = SORT_BY_DEFAULT, $sort_order = SORT_ORDER_DEFAULT){
+    
+    // Gestion du selected du select
+    $selected = [SORT_BY_DATE => '', SORT_BY_TITLE => '', SORT_BY_TYPE => '', SORT_BY_FAVORIS => ''];
+    switch ($sorted_by) {
+        case SORT_BY_DATE:
+            $selected[SORT_BY_DATE] = 'selected';
+            break;
+        case SORT_BY_TITLE:  
+            $selected[SORT_BY_TITLE] = 'selected'; 
+            break;
+        case SORT_BY_TYPE:
+            $selected[SORT_BY_TYPE] = 'selected';
+            break;
+        case SORT_BY_FAVORIS:
+            $selected[SORT_BY_FAVORIS] = 'selected';
+            break;        
+    }
+
+    // Gestions des options de tri
+    $selected_order = [SORT_ORDER_ASC => '', SORT_ORDER_DESC => ''];
+    switch ($sort_order) {
+        case SORT_ORDER_ASC:
+            $selected_order[SORT_ORDER_ASC] = 'selected';
+            break;
+        case SORT_ORDER_DESC:  
+            $selected_order[SORT_ORDER_DESC] = 'selected'; 
+            break;        
+    }
+    
+    $html = '
+    <form id="form_sort_note" method="post">       
+        <label for="sort_note" class="label_sort_note">Trier par</label>
+        <select name="sort_note" id="sort_note" class="select_sort_note">
+            <option value="'.SORT_BY_DATE.'" '.$selected[SORT_BY_DATE].'>Date</option>
+            <option value="'.SORT_BY_TITLE.'" '.$selected[SORT_BY_TITLE].'>Titre</option>
+            <option value="'.SORT_BY_TYPE.'" '.$selected[SORT_BY_TYPE].'>Type</option>
+            <option value="'.SORT_BY_FAVORIS.'" '.$selected[SORT_BY_FAVORIS].'>Favoris</option>
+        </select> 
+        <select name="sort_order" id="sort_order" class="select_sort_order">
+            <option value="'.SORT_ORDER_ASC.'" '.$selected_order[SORT_ORDER_ASC].'>Asc</option>
+            <option value="'.SORT_ORDER_DESC.'" '.$selected_order[SORT_ORDER_DESC].'>Desc</option>           
+        </select>               
+        <!--<button type="submit" class="btn btn-outline-success">Trier</button>-->
+    </form>
+    ';
+    
     return $html;
 }
 
@@ -326,4 +408,64 @@ function ADDNewNoteToFile($title, $content, $type, $favoris){
         $result = file_put_contents($filename, json_encode($note));
     
     return $result;
+}
+
+/**
+ * Suppression d'une note
+ * 
+ * @param mixed $file 
+ * @return bool 
+ */
+function DELETENoteFile($file){
+    return unlink($file);
+}
+
+/**
+ * Système de tri des notes
+ * 
+ * @param string $term 
+ * @return array 
+ */
+function GETNotesSortedBy($listNotes, $term = SORT_BY_DEFAULT, $order = SORT_ORDER_DEFAULT) {
+        
+    //Systeme de tri
+    switch($term){
+        case SORT_BY_DATE:
+            if($order == SORT_ORDER_DESC)
+                usort($listNotes, function($a, $b) use ($term) {
+                    return strtotime($b[$term]) - strtotime($a[$term]);
+                });
+            else
+                usort($listNotes, function($a, $b) use ($term) {
+                    return strtotime($a[$term]) - strtotime($b[$term]);
+                });
+            break;
+        case SORT_BY_TITLE:
+            if($order == SORT_ORDER_DESC)
+                usort($listNotes, function($a, $b) {
+                    return strcmp($b['title'], $a['title']);
+                });
+            else
+                usort($listNotes, function($a, $b) {
+                    return strcmp($a['title'], $b['title']);
+                });
+            break;
+        case SORT_BY_TYPE:
+            if($order == SORT_ORDER_DESC)
+                usort($listNotes, function($a, $b) {
+                    return strcmp($b['type'], $a['type']);
+                });
+            else
+                usort($listNotes, function($a, $b) {
+                    return strcmp($a['type'], $b['type']);
+                });
+            break;
+        case SORT_BY_FAVORIS:
+            $listNotes = array_filter($listNotes, function($note){
+                return $note['favoris'] == 1;
+            });
+            break;
+    }
+   
+    return $listNotes;
 }

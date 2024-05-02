@@ -31,21 +31,41 @@ function replaceInputByTextarea() {
 }
 
 // Vérifie si type_note est un 'lien' et remplace le textarea par un input au refresh de la page
-if(document.getElementById('type_note').options[document.getElementById('type_note').selectedIndex].value == 'lien') {
-    //DEBUG// alert('You selected Link or Url.');
-    replaceTextareaByInput();
-}else {
-    //DEBUG// alert('You selected Text.');
-    replaceInputByTextarea();
-}
-
-// Vérifie si type_note est un 'lien' et remplace le textarea par un input au refresh de la page sur l'événement onchange du select
-type_note.onchange = function() {
-    if (this.value == 'lien') {
+if(document.getElementById('form_add_note')){
+    if(document.getElementById('type_note').options[document.getElementById('type_note').selectedIndex].value == 'lien') {
         //DEBUG// alert('You selected Link or Url.');
-        replaceTextareaByInput();    
+        replaceTextareaByInput();
     }else {
         //DEBUG// alert('You selected Text.');
         replaceInputByTextarea();
+    }
+}
+
+// Vérifie si type_note est un 'lien' et remplace le textarea par un input au refresh de la page sur l'événement onchange du select
+if(document.getElementById('type_note')){
+    type_note.onchange = function() {
+        if (this.value == 'lien') {
+            //DEBUG// alert('You selected Link or Url.');
+            replaceTextareaByInput();    
+        }else {
+            //DEBUG// alert('You selected Text.');
+            replaceInputByTextarea();
+        }
+    }
+}
+
+// Trier les notes sur le select 'sort_note' et 'sort_order'
+if(document.getElementById('sort_note') && document.getElementById('sort_order')) {
+    let select = document.getElementById('sort_note');
+    let select_order = document.getElementById('sort_order');    
+    let form_sort_note = document.getElementById('form_sort_note');
+ 
+    select.onchange = function() {
+        // submit the form
+        form_sort_note.submit();
+    }
+    select_order.onchange = function() {
+        // submit the form
+        form_sort_note.submit();
     }
 }
