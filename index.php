@@ -13,9 +13,9 @@
 
     // Initialisation des variables
     // *****************************
-    $notes = '';
-    $message = '';
-    $favoris = '';
+    $section_notes = '';
+    $section_message = '';
+    $section_favoris = '';
     $sort_note = SORT_BY_DEFAULT;
     $sort_order = SORT_ORDER_DEFAULT;
 
@@ -38,28 +38,28 @@
 
     switch($page){
         case 'addnote':
-            $notes = HTMLFormAddNewNote();
-            $favoris = null;
+            $section_notes = HTMLFormAddNewNote();
+            $section_favoris = null;
             break;
         case 'view':
             if(!empty($_GET['file'])){
-                $file = $_GET['file'];                
-                $notes = HTMLViewNote($file);
-                $favoris = null;
+                $file = $_GET['file'];
+                $note = LOADNote($file);                
+                $section_notes = HTMLViewNote($note);
+                $section_favoris = null;
             }else{
                 $GLOBALS['msg'] = 'Erreur lors de la récupération de la note';
                 $GLOBALS['msgType'] = 'danger';
-                $favoris = null;
-                $notes = null;
+                $section_favoris = null;
+                $section_notes = null;
                 header('Refresh:2; url=index.php?page=home');                
             }
             break;
         case 'confirm':
-            $notes = HTMLInsertConfirmationBox("Souhaitez-vous vraiment supprimer cette note ?");
+            $section_notes = HTMLInsertDeleteConfirmation("Souhaitez-vous vraiment supprimer cette note ? <br> ");
             break;
         case 'delete':
-            if(!empty($_GET['file'])){
-                
+            if(!empty($_GET['file'])) {                
                 $file = $_GET['file'];                
                 $status = DELETENoteFile($file);                
 
@@ -74,15 +74,34 @@
                 }
 
             }else{
-                $GLOBALS['msg'] = 'Erreur lors de la récupération de la note';
+                $GLOBALS['msg'] = 'Erreur lors de la récupération de la note en vue de sa suppression';
                 $GLOBALS['msgType'] = 'danger';
                 header('Refresh:2; url=index.php?page=home');                
             }
             break;
-        default:
-            $notes = HTMLViewListNotes($sort_note, $sort_order);
-            $favoris = HTMLViewListFavorites();
-            break;
+            case 'editnote':
+                if(!empty($_GET['file'])){
+                    $file = $_GET['file'];  
+                    $note = LOADNote($file);              
+                    $section_notes = HTMLFormEditNote($note);
+                    $section_favoris = null;
+                }else{
+                    $GLOBALS['msg'] = 'Erreur lors de la récupération de la note en vue de son édition';
+                    $GLOBALS['msgType'] = 'danger';
+                    $section_favoris = null;
+                    $section_notes = null;
+                    header('Refresh:2; url=index.php?page=home');                
+                }
+                break;
+            default:
+                // Acquisition et tri des notes            
+                $notes = GETListAllNotes();
+                $sortedNotes = GETNotesSortedBy($notes, $sort_note, $sort_order);
+
+                // Affichages des notes et des favoris
+                $section_notes = HTMLViewListNotes($sortedNotes, $sort_note, $sort_order);
+                $section_favoris = HTMLViewListFavorites();
+                break;
     }
 
     // Gestion des formulaires
@@ -91,7 +110,7 @@
         // ****************
         if(isset($_POST['action']) && $_POST['action'] == 'addnote')
         {
-            if(isset($_POST['title_note']) && isset($_POST['content_note']) && isset($_POST['type_note'])){
+            if(isset($_POST['title_note']) && isset($_POST['content_note']) && isset($_POST['type_note'])) {
                 $note_title = $_POST['title_note'];
                 $note_content = $_POST['content_note'];
                 $note_type = $_POST['type_note'];
@@ -112,14 +131,42 @@
                 $GLOBALS['msg'] = 'Veuillez remplir tous les champs';
                 $GLOBALS['msgType'] = 'danger';            
             }
+        // Edition d'une note
+        // ******************    
+        }elseif(isset($_POST['action']) && $_POST['action'] == 'recordnote') {
+
+            if( isset($_POST['title_note']) && isset($_POST['content_note']) && isset($_POST['type_note']) && 
+                isset($_POST['file_note']) && isset($_POST['date_note'])) {
+                $note_record = [];    
+                $note_record['title'] = $_POST['title_note'];
+                $note_record['content'] = $_POST['content_note'];
+                $note_record['type'] = $_POST['type_note'];
+                $note_record['favoris'] = (isset($_POST['favori_note']))? $_POST['favori_note'] : 0;
+                $note_record['file'] = $_POST['file_note'];
+                $note_record['date'] = $_POST['date_note'];
+                $status = UPDATENoteFile($note_record);
+                
+                if($status === false){
+                    $GLOBALS['msg'] = 'Erreur lors de l\'édition de la note';
+                    $GLOBALS['msgType'] = 'danger';
+                    header('Refresh:2; url=index.php?page=home');                                
+                }else{
+                    $GLOBALS['msg'] = 'Note mis à jour avec succès';
+                    $GLOBALS['msgType'] = 'info';
+                    header('Refresh:2; url=index.php?page=home');                                
+                }
+                
+            }else{
+                $GLOBALS['msg'] = 'Veuillez remplir tous les champs';
+                $GLOBALS['msgType'] = 'danger';                            
+            }
         }
         
-
     // Gestion des messages
     // ********************
     if(isset($GLOBALS['msg']) && !empty($GLOBALS['msg']))
     {                
-        $message = HTMLInsertMessage($GLOBALS['msg'], $GLOBALS['msgType']);                   
+        $section_message = HTMLInsertMessage($GLOBALS['msg'], $GLOBALS['msgType']);                   
         $GLOBALS['msg'] = '';
         $GLOBALS['msgType'] = '';                                      
     }      
@@ -140,13 +187,13 @@
         <hr>        
         
         <!-- Affichage des messages -->       
-        <?php echo $message; ?>
+        <?php echo $section_message; ?>
 
         <!-- Affichage des notes -->
-        <?php echo $notes; ?>
+        <?php echo $section_notes; ?>
         
         <!-- Affichage des favoris -->
-        <?php echo $favoris ?>
+        <?php echo $section_favoris ?>
         
     </div><!-- container -->     
     

@@ -31,7 +31,7 @@ function replaceInputByTextarea() {
 }
 
 // Vérifie si type_note est un 'lien' et remplace le textarea par un input au refresh de la page
-if(document.getElementById('form_add_note')){
+if(document.getElementById('form_add_note') != undefined) {
     if(document.getElementById('type_note').options[document.getElementById('type_note').selectedIndex].value == 'lien') {
         //DEBUG// alert('You selected Link or Url.');
         replaceTextareaByInput();

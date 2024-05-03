@@ -10,7 +10,7 @@
  * 
  * @return string 
  */
-function HTMLFormAddNewNote(){
+function HTMLFormAddNewNote() {
     $html = '
             <div class="row">
                 <div class="col-12">                    
@@ -39,7 +39,7 @@ function HTMLFormAddNewNote(){
                         </div>    
                         <div class="mb-3 form-group">
                             <label for="content" class="form-label appLabel" id="label_content_note">Contenu</label>
-                            <textarea name="content_note" id="content_note"class="form-control" placeholder="Content" rows="10" required></textarea>
+                            <textarea name="content_note" id="content_note" class="form-control" placeholder="Content" rows="10" required></textarea>
                         </div>
                         <input type="hidden" name="action" value="addnote">
                         <button type="submit" class="btn btn-outline-success">Ajouter</button>
@@ -50,21 +50,76 @@ function HTMLFormAddNewNote(){
 
     return $html;
 }
+
+// Ajouter un fomulaire de modification de note
+function HTMLFormEditNote($note) {  
+    $html = '
+            <div class="row">
+                <div class="col-12">                    
+                    <h1 class="mb-3 appMainColor appPageTitle">Modifier la note</h1>   
+                </div>
+            </div> 
+            <div class="row">
+                <div class="col-12">                    
+                
+                    <form id="form_edit_note" action="index.php" method="post">
+                        <div class="mb-3 form-group">
+                            <label for="title_note" class="form-label appLabel">Titre</label>
+                            <input type="text" class="form-control" name="title_note" ide="title_note" value="'.$note['title'].'" required>
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label for="type_note" class="form-label appLabel">Type</label>';
+                            $html .= '<select name="type_note" id="type_note" class="form-control" required>';
+
+                            foreach(NOTE_TYPES as $key => $value){
+                                if($note['type'] == $key)
+                                    $html .= '<option value="'.$key.'" selected>'.$value.'</option>';
+                                else
+                                    $html .= '<option value="'.$key.'">'.$value.'</option>';
+                            }
+                            $html .= '</select>';
+                       
+                        $html .= '<div class="mb-3 form-group">';                                                   
+
+                            if($note['favoris'] == 1)
+                                $html .= '<input class="form-check-input" type="checkbox" value="1" id="favori_note" name="favori_note" checked>';
+                            else
+                                $html .= '<input class="form-check-input" type="checkbox" value="1" id="favori_note" name="favori_note">';                         
+                            
+                        $html .= '
+                        <label class="form-check-label" for="favori_note">Ajouter aux favoris</label>
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label for="content" class="form-label appLabel" id="label_content_note">Contenu</label>
+                            <textarea name="content_note" id="content_note_edit" class="form-control" placeholder="Content" rows="10" required>'.$note['content'].'</textarea>
+                        </div>
+                        <input type="hidden" name="action" value="recordnote">
+                        <input type="hidden" name="file_note" value="'.$note['filename'].'">
+                        <input type="hidden" name="date_note" value="'.$note['date'].'">
+                        <button type="submit" class="btn btn-outline-success">Modifier</button>
+                        <a href="index.php?page=view&file='.$note['filename'].'" class="btn btn-outline-danger">Annuler</a>
+                    </form>
+
+                </div>
+            </div>';
+
+    return $html;
+}
+
 /**
  * Affichage de la liste des favoris
  * 
  * @param mixed $list 
  * @return string 
  */
-function HTMLViewListFavorites()
-{
+function HTMLViewListFavorites() {
     // Intialisation des variables
     $notes = '';
     $sortedNotes = '';
     $html = '';
 
     // Acquisition et tri des notes
-    $notes = GETArrayNotes();
+    $notes = GETListAllNotes();
     $sortedNotes = GETNotesSortedBy($notes, SORT_BY_FAVORIS);
         
     $html = '
@@ -102,25 +157,15 @@ function HTMLViewListFavorites()
  * 
  * @return string 
  */
-function HTMLViewListNotes($sorted_by, $order){
-
-    // Intialisation des variables
-    $notes = '';
-    $sortedNotes = '';
-    $html = '';
-
-    // Acquisition et tri des notes
-    $notes = GETArrayNotes();
-    $sortedNotes = GETNotesSortedBy($notes, $sorted_by, $order);
-    //DEBUG// T_Printr($sortedNotes, 'HTMLListNotes'); die();
-
+function HTMLViewListNotes($sortedNotes, $sort_note, $sort_order) {
+    //DEBUG// T_Printr($sortedNotes, 'HTMLListNotes');
     $html = '
     <div class="row">
         <div class="col-12">                    
             <h1 class="mb-3 appMainColor appPageTitle">Notes <img src="assets/img/section.png"></h1>   
         </div>
     </div>'
-        .HTMLInsertFormSortNote($sorted_by, $order).'
+        .HTMLInsertFormSortNote($sort_note, $sort_order).'
     <div class="row">
         <div class="col-12">                     
             <div>';
@@ -155,8 +200,7 @@ function HTMLViewListNotes($sorted_by, $order){
  * @param string $type 
  * @return string 
  */
-function HTMLInsertMessage($msg, $type = 'info')
-{
+function HTMLInsertMessage($msg, $type = 'info') {
     $html = '
         <div class="row">
             <div class="col-12">  
@@ -180,14 +224,23 @@ function HTMLInsertMessage($msg, $type = 'info')
  * 
  * @return string 
  */
-function HTMLInsertConfirmationBox($msg)
-{
+function HTMLInsertDeleteConfirmation($msg) {
+    (LOADNote($_GET['file']) != false)? $note = LOADNote($_GET['file']) : $note = 'Erreur';
+    
+    if($note == 'Erreur')
+        return '<div class="alert alert-danger text-center">Note introuvable <br><a href="index.php">Retour</a></div>';
+
     $html = '
     <div class="row">
         <div class="col-12 text-center">  
-            <div class="alert alert-warning">'.$msg.'</div>
-            <a href="index.php?page=home" class="btn btn-outline-success">Annuler</a>
-            <a href="index.php?page=delete&file='.$_GET['file'].'" class="btn btn-outline-danger">Confirmer</a>
+            <div class="alert alert-warning">
+                '.$msg.'
+                <strong>'.$note['title'].'</strong>
+            </div>            
+            <div>
+                <a href="index.php?page=view&file='.$_GET['file'].'" class="btn btn-outline-success">Annuler</a>
+                <a href="index.php?page=delete&file='.$_GET['file'].'" class="btn btn-outline-danger">Confirmer</a>
+            </div>
         </div>                     
     </div>
     '; 
@@ -200,11 +253,10 @@ function HTMLInsertConfirmationBox($msg)
  * 
  * @return string 
  */
-function HTMLInsertMenu(){
+function HTMLInsertMenu() {
     $html = '<div class="row">
                 <div class="col-12 text-center">      
-                    <a href="index.php">Home</a> -
-                    <a href="index.php?page=addnote">Ajouter</a>
+                x <a href="index.php">Home</a> X <a href="index.php?page=addnote">Ajouter</a> x
                 </div>
             </div>';            
 
@@ -216,7 +268,7 @@ function HTMLInsertMenu(){
  * 
  * @return string 
  */
-function HTMLInsertFooter(){
+function HTMLInsertFooter() {
     $html = '<footer class="appFooter">
                 <div class="container">
                     <div class="row">
@@ -236,7 +288,7 @@ function HTMLInsertFooter(){
  * 
  * @return string 
  */
-function HTMLInsertBanner(){
+function HTMLInsertBanner() {
     $html = '<div class="row">
                 <div class="col-12 text-center">      
                 <h1><img src="assets/img/banner.png" class="img-fluid" alt="Logo Extra Note">'.APP_NAME.'</h1>
@@ -251,7 +303,7 @@ function HTMLInsertBanner(){
  * 
  * @return string 
  */
-function HTMLInsertHeader(){
+function HTMLInsertHeader() {
     $html = '
     <head>
         <meta charset="UTF-8">
@@ -271,12 +323,8 @@ function HTMLInsertHeader(){
  * @param mixed $favori 
  * @return string 
  */
-function HTMLViewNote($file)
-{
-    $note = json_decode(file_get_contents($file), true);
-    $note = $note[0];
+function HTMLViewNote($note) {
     //DEBUG//T_Printr($note, 'note');
-
     if(!$note)
         return '<div class="alert alert-danger text-center">Note introuvable</div>';
 
@@ -286,7 +334,8 @@ function HTMLViewNote($file)
                     <hr>
                     <h6 class="mb-3 appMainColor"><span class=""><span class="badge">'.$note['type'].'</span></h6> 
                     <h6 class="mb-3 appMainColor"><span class="">'.$note['date'].'</span></h6>
-                    <a href="index.php?page=confirm&file='.$note['filename'].'" class="btn btn-outline-danger btn-sm btn-note-delete" title="Supprimer"> X </a>
+                    <a href="index.php?page=confirm&file='.$note['filename'].'" class="btn btn-outline-danger btn-sm btn-note-delete" title="Supprimer"> Supprimer </a>
+                    <a href="index.php?page=editnote&file='.$note['filename'].'" class="btn btn-outline-success btn-sm btn-note-delete" title="Modifier"> Modifier </a>
                 </div>   
                 <div class="col-1"></div> 
                 <div class="col-7 appViewNote">                     
@@ -304,7 +353,7 @@ function HTMLViewNote($file)
  * @param string $sorted_by 
  * @return string 
  */
-function HTMLInsertFormSortNote($sorted_by = SORT_BY_DEFAULT, $sort_order = SORT_ORDER_DEFAULT){
+function HTMLInsertFormSortNote($sorted_by = SORT_BY_DEFAULT, $sort_order = SORT_ORDER_DEFAULT) {
     
     // Gestion du selected du select
     $selected = [SORT_BY_DATE => '', SORT_BY_TITLE => '', SORT_BY_TYPE => '', SORT_BY_FAVORIS => ''];
@@ -359,7 +408,7 @@ function HTMLInsertFormSortNote($sorted_by = SORT_BY_DEFAULT, $sort_order = SORT
  * 
  * @return array|empty
  */
-function GETArrayNotes(){
+function GETListAllNotes() {
     $files = glob(NOTES_DIR.'/*.json');    
     $notes = [];
 
@@ -431,7 +480,7 @@ function GETNotesSortedBy($listNotes, $term = SORT_BY_DEFAULT, $order = SORT_ORD
  * @param mixed $content 
  * @return void 
  */
-function ADDNewNoteToFile($title, $content, $type, $favoris){
+function ADDNewNoteToFile($title, $content, $type, $favoris) {
     
     $result = false;
     $filename = NOTES_DIR.'/notes-'.date("d-m-Y").'-'.T_RandNumber(5).'.json';
@@ -467,7 +516,65 @@ function ADDNewNoteToFile($title, $content, $type, $favoris){
  * @param mixed $file 
  * @return bool 
  */
-function DELETENoteFile($file){
-    return unlink($file);
+function DELETENoteFile($file) {
+    if(file_exists($file))
+        $st = unlink($file);
+    else
+        $st = false;
+
+    return $st;
+}
+
+/**
+ * Chargement d'une note
+ * 
+ * @param mixed $file 
+ * @return mixed 
+ */
+function LOADNote($file) {    
+    // Si le fichier n'existe pas
+    if(!file_exists($file))
+        return false;
+
+    // Chargement de la note
+    $note = json_decode(file_get_contents($file), true);
+    $note = $note[0];
+
+    return $note;
+}
+
+/**
+ * Mise à jour d'une note
+ * 
+ * @param mixed $note_record 
+ * @return int|false 
+ */
+function UPDATENoteFile($note_record) {
+    $result = false;
+    $note [] = [
+        'title' => $note_record['title'],
+        'content' => '',
+        'type' => $note_record['type'],
+        'favoris' => $note_record['favoris'],
+        'filename' => $note_record['file'],
+        'date' => $note_record['date']
+    ];
+
+    // Traitement du contenu en fonction du type
+    switch($note_record['type']){        
+        case 'code':
+            $note[0]['content'] = '<pre><code>'.$note_record['content'].'</code></pre>';
+            break;
+        case 'lien':
+            $note[0]['content'] = '<a href="'.$note_record['content'].'" target="_blank">'.$note_record['content'].'</a>';
+            break;
+        case 'note':
+            $note[0]['content'] = $note_record['content'];
+            break;
+    }   
+
+    $result = file_put_contents($note_record['file'], json_encode($note));
+    
+    return $result;
 }
 

@@ -1,8 +1,8 @@
 <?php
 
 // Constantes génériques de l'application
-const APP_VERSION = '0.10.0';
-const APP_DATE_UPDATE = '02/05/2024 16:15';
+const APP_VERSION = '0.11.0';
+const APP_DATE_UPDATE = '03/05/2024 16:35';
 const APP_NAME = 'ExtraNote';
 const APP_TITLE = 'ExtraNote - Gestionnaire de notes';
 
