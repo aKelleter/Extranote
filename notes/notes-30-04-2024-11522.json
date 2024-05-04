@@ -1,10 +1,1 @@
-[
-  {
-    "title": "Exemple de code",
-    "content": "<pre><code>$note [] = [\r\n        'title' => $title,\r\n        'content' => $content,\r\n        'type' => $type,\r\n        'favoris' => $favoris,\r\n        'filename' => $filename,\r\n        'date' => date(\"d-m-Y H:i:s\")\r\n    ];</code></pre>",
-    "type": "code",
-    "favoris": 0,
-    "filename": "notes/notes-30-04-2024-11522.json",
-    "date": "30-04-2024 10:36:17"
-  }
-]
+[{"title":"Exemple de code","content":"$note [] = [\r\n        'title' => $note_record['title'],\r\n        'content' => $note_record['content'],\r\n        'type' => $note_record['type'],\r\n        'favoris' => $note_record['favoris'],\r\n        'filename' => $note_record['file'],\r\n        'date' => $note_record['date']\r\n    ];","type":"code","favoris":0,"filename":"notes\/notes-30-04-2024-11522.json","date":"30-04-2024 10:36:17"}]

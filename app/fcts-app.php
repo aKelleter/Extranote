@@ -334,16 +334,40 @@ function HTMLViewNote($note) {
                     <hr>
                     <h6 class="mb-3 appMainColor"><span class=""><span class="badge">'.$note['type'].'</span></h6> 
                     <h6 class="mb-3 appMainColor"><span class="">'.$note['date'].'</span></h6>
-                    <a href="index.php?page=confirm&file='.$note['filename'].'" class="btn btn-outline-danger btn-sm btn-note-delete" title="Supprimer"> Supprimer </a>
                     <a href="index.php?page=editnote&file='.$note['filename'].'" class="btn btn-outline-success btn-sm btn-note-delete" title="Modifier"> Modifier </a>
+                    <a href="index.php?page=confirm&file='.$note['filename'].'" class="btn btn-outline-danger btn-sm btn-note-delete" title="Supprimer"> Supprimer </a>                    
                 </div>   
                 <div class="col-1"></div> 
                 <div class="col-7 appViewNote">                     
                     <div>
-                        <p>'.$note['content'].'</p>
+                        '.HTMLFormatNote($note['type'], $note['content']).'
                     </div>
                 </div>
             </div>';
+    return $html;
+}
+
+/**
+ * Formatage de la note en fonction de son type
+ * 
+ * @param mixed $type 
+ * @param mixed $note 
+ * @return mixed 
+ */
+function HTMLFormatNote($type, $note) {
+    $html = '';
+    switch($type){
+        case 'code':
+            $html = '<pre><code>'.$note.'</code></pre>';
+            break;
+        case 'lien':
+            $html = '<a href="'.$note.'" target="_blank">'.$note.'</a>';
+            break;
+        case 'note':
+            $html = $note;
+            break;
+    }   
+
     return $html;
 }
 
@@ -474,11 +498,11 @@ function GETNotesSortedBy($listNotes, $term = SORT_BY_DEFAULT, $order = SORT_ORD
 
 
 /**
- * Affichage de la liste des notes
+ * Ajout d'une nouvelle note au format fichier JSON
  * 
  * @param mixed $title 
  * @param mixed $content 
- * @return void 
+ * @return int|false 
  */
 function ADDNewNoteToFile($title, $content, $type, $favoris) {
     
@@ -492,18 +516,8 @@ function ADDNewNoteToFile($title, $content, $type, $favoris) {
         'favoris' => $favoris,
         'filename' => $filename,
         'date' => date("d-m-Y H:i:s")
-    ];
-
-    // Traitement du contenu en fonction du type
-    switch($type){        
-        case 'code':
-            $note[0]['content'] = '<pre><code>'.$note[0]['content'].'</code></pre>';
-            break;
-        case 'lien':
-            $note[0]['content'] = '<a href="'.$note[0]['content'].'" target="_blank">'.$note[0]['content'].'</a>';
-            break;
-    }   
-    
+    ];      
+   
     if(file_exists(NOTES_DIR))
         $result = file_put_contents($filename, json_encode($note));
     
@@ -511,7 +525,7 @@ function ADDNewNoteToFile($title, $content, $type, $favoris) {
 }
 
 /**
- * Suppression d'une note
+ * Suppression d'une note, suppression du fichier
  * 
  * @param mixed $file 
  * @return bool 
@@ -553,25 +567,12 @@ function UPDATENoteFile($note_record) {
     $result = false;
     $note [] = [
         'title' => $note_record['title'],
-        'content' => '',
+        'content' => $note_record['content'],
         'type' => $note_record['type'],
         'favoris' => $note_record['favoris'],
         'filename' => $note_record['file'],
         'date' => $note_record['date']
     ];
-
-    // Traitement du contenu en fonction du type
-    switch($note_record['type']){        
-        case 'code':
-            $note[0]['content'] = '<pre><code>'.$note_record['content'].'</code></pre>';
-            break;
-        case 'lien':
-            $note[0]['content'] = '<a href="'.$note_record['content'].'" target="_blank">'.$note_record['content'].'</a>';
-            break;
-        case 'note':
-            $note[0]['content'] = $note_record['content'];
-            break;
-    }   
 
     $result = file_put_contents($note_record['file'], json_encode($note));
     

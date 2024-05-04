@@ -151,7 +151,7 @@
                     $GLOBALS['msgType'] = 'danger';
                     header('Refresh:2; url=index.php?page=home');                                
                 }else{
-                    $GLOBALS['msg'] = 'Note mis à jour avec succès';
+                    $GLOBALS['msg'] = 'Note mise à jour avec succès';
                     $GLOBALS['msgType'] = 'info';
                     header('Refresh:2; url=index.php?page=home');                                
                 }
