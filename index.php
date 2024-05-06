@@ -4,12 +4,12 @@
 // *******************************************************
     require 'conf.php';
     require 'app/fcts-tools.php';
+    require 'app/fcts-html.php';
     require 'app/fcts-app.php';
 
     //DEBUG// T_Printr($_POST, 'POST');
     //DEBUG// T_Printr($_GET, 'GET');
-    //DEBUG// T_Printr($GLOBALS, 'GLOBALS');
-    
+    //DEBUG// T_Printr($GLOBALS, 'GLOBALS');    
 
     // Initialisation des variables
     // *****************************
@@ -44,7 +44,7 @@
         case 'view':
             if(!empty($_GET['file'])){
                 $file = $_GET['file'];
-                $note = LOADNote($file);                
+                $note = LOADNoteFromFile($file);                
                 $section_notes = HTMLViewNote($note);
                 $section_favoris = null;
             }else{
@@ -82,7 +82,7 @@
             case 'editnote':
                 if(!empty($_GET['file'])){
                     $file = $_GET['file'];  
-                    $note = LOADNote($file);              
+                    $note = LOADNoteFromFile($file);              
                     $section_notes = HTMLFormEditNote($note);
                     $section_favoris = null;
                 }else{
@@ -96,6 +96,7 @@
             default:
                 // Acquisition et tri des notes            
                 $notes = GETListAllNotes();
+                //DEBUG// T_Printr($notes, 'Notes non triées');
                 $sortedNotes = GETNotesSortedBy($notes, $sort_note, $sort_order);
 
                 // Affichages des notes et des favoris
@@ -202,5 +203,6 @@
 
     <!-- Scripts -->
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/tooltip.js"></script>
 </body>
 </html>

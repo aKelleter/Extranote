@@ -9,6 +9,7 @@ function replaceTextareaByInput() {
     input.type = "url";
     input.name = "content_note";
     input.id = "content_note";
+    input.value = textarea.value;
     input.placeholder = "Entrez un \"Lien\" ou \"URL\" valide qui commence par: http(s)://...";
     input.required = true;
     input.pattern = "https?://.+"; // Regex pour vérifier si l'url est valide
@@ -25,13 +26,16 @@ function replaceInputByTextarea() {
     textarea.className = "form-control";
     textarea.name = "content_note";
     textarea.id = "content_note";
+    textarea.value = input.value;
+    textarea.rows = 10;    
     textarea.placeholder = "Le contenu de votre note...";
     input.after(textarea);
     input.remove();
 }
 
+
 // Vérifie si type_note est un 'lien' et remplace le textarea par un input au refresh de la page
-if(document.getElementById('form_add_note') != undefined) {
+if(document.getElementById('form_add_note') != undefined || document.getElementById('form_edit_note') != undefined) {   
     if(document.getElementById('type_note').options[document.getElementById('type_note').selectedIndex].value == 'lien') {
         //DEBUG// alert('You selected Link or Url.');
         replaceTextareaByInput();

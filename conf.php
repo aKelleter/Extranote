@@ -1,11 +1,10 @@
 <?php
 
 // Constantes génériques de l'application
-const APP_VERSION = '0.12.0';
-const APP_DATE_UPDATE = '04/05/2024 15:05';
 const APP_NAME = 'ExtraNote';
 const APP_TITLE = 'ExtraNote - Gestionnaire de notes';
-
+const APP_VERSION = '1.0.0';
+const APP_DATE_UPDATE = '06/05/2024 16:15';
 
 // Constante du répertoire de stockage des notes
 const NOTES_DIR = 'notes';
@@ -28,3 +27,6 @@ const SORT_ORDER_DESC = 'desc';
 
 // Ordre de tri par défaut
 const SORT_ORDER_DEFAULT = SORT_ORDER_DESC;
+
+// Affiche complètement le titre des notes et favoris (un nombre entier compris entre "1" et "xx". Ou "O" pour afficher le titre complet)
+const NOTE_TITLE_LIMIT = 5;
