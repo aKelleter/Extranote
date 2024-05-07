@@ -1,11 +1,10 @@
 <?php
 
 // Constantes génériques de l'application
-const APP_VERSION = '0.12.0';
-const APP_DATE_UPDATE = '04/05/2024 15:05';
 const APP_NAME = 'ExtraNote';
 const APP_TITLE = 'ExtraNote - Gestionnaire de notes';
-
+const APP_VERSION = '1.0.0';
+const APP_DATE_UPDATE = '07/05/2024 16:15';
 
 // Constante du répertoire de stockage des notes
 const NOTES_DIR = 'notes';
@@ -28,3 +27,8 @@ const SORT_ORDER_DESC = 'desc';
 
 // Ordre de tri par défaut
 const SORT_ORDER_DEFAULT = SORT_ORDER_DESC;
+
+// Affiche un certain nombre de caractères ou entièrement le titre des notes et favoris 
+// Soit un nombre entier compris entre "1" et "xx". Ou "O" pour afficher le titre entièrement
+// Si la valeur est supérieure à zéro le système de tooltip est activé au survol de la tuile par la souris
+const NOTE_TITLE_LIMIT = 0;

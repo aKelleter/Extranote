@@ -4,12 +4,12 @@
 // *******************************************************
     require 'conf.php';
     require 'app/fcts-tools.php';
+    require 'app/fcts-html.php';
     require 'app/fcts-app.php';
 
     //DEBUG// T_Printr($_POST, 'POST');
     //DEBUG// T_Printr($_GET, 'GET');
-    //DEBUG// T_Printr($GLOBALS, 'GLOBALS');
-    
+    //DEBUG// T_Printr($GLOBALS, 'GLOBALS');    
 
     // Initialisation des variables
     // *****************************
@@ -44,7 +44,7 @@
         case 'view':
             if(!empty($_GET['file'])){
                 $file = $_GET['file'];
-                $note = LOADNote($file);                
+                $note = LOADNoteFromFile($file);                
                 $section_notes = HTMLViewNote($note);
                 $section_favoris = null;
             }else{
@@ -82,7 +82,7 @@
             case 'editnote':
                 if(!empty($_GET['file'])){
                     $file = $_GET['file'];  
-                    $note = LOADNote($file);              
+                    $note = LOADNoteFromFile($file);              
                     $section_notes = HTMLFormEditNote($note);
                     $section_favoris = null;
                 }else{
@@ -96,11 +96,12 @@
             default:
                 // Acquisition et tri des notes            
                 $notes = GETListAllNotes();
+                //DEBUG// T_Printr($notes, 'Notes non triées');
                 $sortedNotes = GETNotesSortedBy($notes, $sort_note, $sort_order);
 
                 // Affichages des notes et des favoris
                 $section_notes = HTMLViewListNotes($sortedNotes, $sort_note, $sort_order);
-                $section_favoris = HTMLViewListFavorites();
+                $section_favoris = HTMLViewListFavorites();               
                 break;
     }
 
@@ -160,6 +161,17 @@
                 $GLOBALS['msg'] = 'Veuillez remplir tous les champs';
                 $GLOBALS['msgType'] = 'danger';                            
             }
+        // Rechercher une/des note(s)
+        // **************************
+        }elseif(isset($_POST['action']) && $_POST['action'] == 'search') {
+            if(isset($_POST['search_term']) && !empty($_POST['search_term'])){
+                $search = $_POST['search_term'];
+                $notes = GETListAllNotes();                
+                $searchedNotes = SEARCHInNotes($notes, $search);
+                $section_notes = '<p class="text-center"><strong>Chaîne recherchée : <span class="termSearch">"'.$search.'"</span></strong></p>';
+                $section_notes .= HTMLViewListNotes($searchedNotes, $sort_note, $sort_order);
+                $section_notes .= '<p><a href="index.php" class="btn btn-outline-success btn-sm">RESET &#11119;</a></p>';
+            }
         }
         
     // Gestion des messages
@@ -189,11 +201,11 @@
         <!-- Affichage des messages -->       
         <?php echo $section_message; ?>
 
-        <!-- Affichage des notes -->
-        <?php echo $section_notes; ?>
-        
         <!-- Affichage des favoris -->
         <?php echo $section_favoris ?>
+
+        <!-- Affichage des notes -->
+        <?php echo $section_notes; ?>
         
     </div><!-- container -->     
     
@@ -202,5 +214,6 @@
 
     <!-- Scripts -->
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/tooltip.js"></script>
 </body>
 </html>
