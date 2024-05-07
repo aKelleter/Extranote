@@ -133,7 +133,7 @@ small {
  margin: 15px;
 }
 
-.appNote {
+.tuileNote {
     font-size: 1.1rem;
     font-weight: 300;
     color: var(--appmain-color);
@@ -144,9 +144,19 @@ small {
     border-radius: 5px;
 }
 
-.appNote:hover {
+.tuileNote:hover, .tuileNote-mini:hover {
     background-color: var(--appNoteBox-hover);
     color: var(--body-color);
+}
+
+.tuileNote-mini {
+    font-size: 1.0rem;
+    color: var(--appmain-color);
+    background-color: var(--appNote-backg);
+    margin-bottom: 10px;  
+    padding: 0; 
+    border: 1px solid var(--appNote-border);
+    border-radius: 5px;
 }
 
 .appViewNote {
@@ -163,16 +173,6 @@ small {
     color: var(--badge-color) !important;
 }
 
-.label_sort_note {
-    font-size: 0.8rem;
-}
-
-.select_sort_note, .select_sort_order {
-    font-size: 0.8rem; 
-    background-color: var(--appNote-backg); 
-    border: 1px solid var(--appNote-border); 
-    border-radius: 5px;         
-}
 
 .btn-note-delete {
     --bs-btn-padding-y: .25rem; 
@@ -181,13 +181,66 @@ small {
 }
 
 .section_note {
-    background-image: url("../img/section.png");
-    
+    background-image: url("../img/section.png");    
 }
+
+.infoFooter {
+    font-size: 0.9rem;
+    color: var(--body-color);
+}
+
+.termSearch {
+    color: var(--danger-color);    
+}
+
+
 
 /* *********************** */
 /* --    Forms  Rules   -- */
 /* *********************** */
+
+.input_wrapper { 
+    position: relative; 
+    display: inline-block; 
+} 
+
+.input_wrapper input { 
+    padding-right: 40px; 
+} 
+
+.input_wrapper button { 
+    position: absolute; 
+    top: 0; 
+    right: 0; 
+    border: none; 
+    background-color: transparent; 
+    cursor: pointer; 
+} 
+
+.label_sort_note {
+    font-size: 0.8rem;
+}
+
+.select_sort_note, .select_sort_order, .input_search_note {
+    font-size: 0.8rem; 
+    background-color: var(--appNote-backg); 
+    border: 1px solid var(--appNote-border); 
+    border-radius: 5px; 
+}
+
+.input_search_note:focus {
+    border-color: var(--focus-input-border);
+    box-shadow: 0 8px 8px rgba(0, 0, 0, 0.075) inset, 0 0 8px  var(--focus-input-border);
+    outline: 0 none;    
+}
+
+
+.btn_submit_search {
+    font-size: 0.8rem;     
+    color: var(--appmain-color); 
+    padding: 0.25rem 0.5rem;     
+}
+
 
 .form-select:focus,
 .form-control:focus,

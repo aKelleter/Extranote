@@ -140,10 +140,10 @@ function HTMLViewListFavorites() {
             {                
                 (NOTE_TITLE_LIMIT > 0)?$html .= '<span  data-tooltip ="'.$note['title'].'">':$html .= '';  
                 $html .= '<a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
-                        <div class="row appNote" alt="Lire">                            
+                        <div class="row tuileNote-mini" alt="Lire">                            
                                 <div class="col-12">
                                     <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
-                                    <h2 class="mb-3 appMainColor">'.T_LimitString($note['title']).'</h2>                                                    
+                                    <p class="mb-3 appMainColor">'.T_LimitString($note['title']).'</p>                                                    
                                 </div>
                         </div>';                   
                 $html .= '</a>';
@@ -166,19 +166,26 @@ function HTMLViewListNotes($sortedNotes, $sort_note, $sort_order) {
         <div class="col-12">                    
             <h1 class="mb-3 appMainColor appPageTitle">Notes <img src="assets/img/section.png"></h1>   
         </div>
-    </div>'
-        .HTMLInsertFormSortNote($sort_note, $sort_order).'
+    </div>
+    <div class="row">
+        <div class="col-md-3">                    
+        '.HTMLInsertFormSortNote($sort_note, $sort_order).'      
+        </div>
+        <div class="col-md-9">                    
+        '.HTMLInsertFormSearch().'      
+        </div>
+    </div>
     <div class="row">
         <div class="col-12">                     
             <div>';
             if(empty($sortedNotes)){
-                $html .= '<div class="alert alert-success text-center">Aucune note pour le moment</div>';
+                $html .= '<div class="alert alert-success text-center mt-3">Il n\'y a pas de note à afficher pour l\'instant</div>';
             }else{                    
                 foreach($sortedNotes as $note)
             {                
                     (NOTE_TITLE_LIMIT > 0)?$html .= '<span  data-tooltip ="'.$note['title'].'">':$html .= '';  
                     $html .= '<a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
-                            <div class="row appNote" alt="Lire">                            
+                            <div class="row tuileNote" alt="Lire">                            
                                     <div class="col-12">
                                         <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
                                         <h2 class="mb-3 appMainColor">'.T_LimitString($note['title']).'</h2>
@@ -277,7 +284,7 @@ function HTMLInsertFooter() {
                     <div class="row">
                         <div class="col-12 text-center">
                         <hr>
-                            <p>ExtraNote - 2024 - v'.APP_VERSION.' - '.APP_DATE_UPDATE.'</p>
+                            <p class="infoFooter">ExtraNote - 2024 - v'.APP_VERSION.' - '.APP_DATE_UPDATE.'</small></p>
                         </div>
                     </div>
                 </div>
@@ -354,9 +361,9 @@ function HTMLViewNote($note) {
 /**
  * Formatage de la note en fonction de son type
  * 
- * @param mixed $type 
- * @param mixed $note 
- * @return mixed 
+ * @param string $type 
+ * @param string $note 
+ * @return string 
  */
 function HTMLFormatNote($type, $note) {
     $html = '';
@@ -427,6 +434,25 @@ function HTMLInsertFormSortNote($sorted_by = SORT_BY_DEFAULT, $sort_order = SORT
         <!--<button type="submit" class="btn btn-outline-success">Trier</button>-->
     </form>
     ';
+    
+    return $html;
+}
+
+
+/**
+ * Affichage du formulaire de recherches
+ * 
+ * @return string 
+ */
+function HTMLInsertFormSearch() {
+    $html = '
+    <div class="input_wrapper float-end">
+        <form id="form_search_note" method="post">
+            <input type="hidden" name="action" value="search">               
+            <input type="text" name="search_term" id="search_term" class="input_search_note " placeholder="Rechercher une note">
+            <button type="submit" class="btn_submit_search" title="Soumettre la recherche"><!--&#x1F50D;-->&rarr;</button>
+        </form>
+    </div>';
     
     return $html;
 }

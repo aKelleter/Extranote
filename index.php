@@ -101,7 +101,7 @@
 
                 // Affichages des notes et des favoris
                 $section_notes = HTMLViewListNotes($sortedNotes, $sort_note, $sort_order);
-                $section_favoris = HTMLViewListFavorites();
+                $section_favoris = HTMLViewListFavorites();               
                 break;
     }
 
@@ -161,6 +161,17 @@
                 $GLOBALS['msg'] = 'Veuillez remplir tous les champs';
                 $GLOBALS['msgType'] = 'danger';                            
             }
+        // Rechercher une/des note(s)
+        // **************************
+        }elseif(isset($_POST['action']) && $_POST['action'] == 'search') {
+            if(isset($_POST['search_term']) && !empty($_POST['search_term'])){
+                $search = $_POST['search_term'];
+                $notes = GETListAllNotes();                
+                $searchedNotes = SEARCHInNotes($notes, $search);
+                $section_notes = '<p class="text-center"><strong>Chaîne recherchée : <span class="termSearch">"'.$search.'"</span></strong></p>';
+                $section_notes .= HTMLViewListNotes($searchedNotes, $sort_note, $sort_order);
+                $section_notes .= '<p><a href="index.php" class="btn btn-outline-success btn-sm">RESET &#11119;</a></p>';
+            }
         }
         
     // Gestion des messages
@@ -190,11 +201,11 @@
         <!-- Affichage des messages -->       
         <?php echo $section_message; ?>
 
-        <!-- Affichage des notes -->
-        <?php echo $section_notes; ?>
-        
         <!-- Affichage des favoris -->
         <?php echo $section_favoris ?>
+
+        <!-- Affichage des notes -->
+        <?php echo $section_notes; ?>
         
     </div><!-- container -->     
     

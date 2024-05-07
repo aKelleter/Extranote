@@ -166,3 +166,20 @@ function UPDATENoteFile($note_record) {
     return $result;
 }
 
+/**
+ * Recherche une chaîne de caractères dans le titre ou le contenu des notes
+ * Retourne un tableau de notes correspondant à la recherche
+ * 
+ * @param mixed $listNotes 
+ * @param mixed $search 
+ * @return array|false 
+ */
+function SEARCHInNotes($listNotes, $search) {
+    $search = strtolower($search);
+    $listNotes = array_filter($listNotes, function($note) use ($search){
+        return (strpos(strtolower($note['title']), $search) !== false || strpos(strtolower($note['content']), $search) !== false);
+    });
+
+    return $listNotes;
+}
+
