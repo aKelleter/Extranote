@@ -4,7 +4,7 @@
 const APP_NAME = 'ExtraNote';
 const APP_TITLE = 'ExtraNote - Gestionnaire de notes';
 const APP_VERSION = '1.0.0';
-const APP_DATE_UPDATE = '07/05/2024 16:15';
+const APP_DATE_UPDATE = '08/05/2024 16:25';
 
 // Constante du répertoire de stockage des notes
 const NOTES_DIR = 'notes';

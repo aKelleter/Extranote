@@ -183,3 +183,48 @@ function SEARCHInNotes($listNotes, $search) {
     return $listNotes;
 }
 
+/**
+ * Gestion des valeurs de tri pour l'affichage des liste déroulantes
+ * du formulaire de tri des notes 
+ * Utilisée dans la fonction d'affichage du formulaire de tri : HTMLInsertFormSortNote()
+ * 
+ * @param string $sorted_by 
+ * @param string $sort_order 
+ * @return string[] 
+ */
+function SORTManager($sorted_by, $sort_order) {
+
+    // Gestion du selected du selected_order 
+    $selected = [SORT_BY_DATE => '', SORT_BY_TITLE => '', SORT_BY_TYPE => '', SORT_BY_FAVORIS => ''];
+
+    switch ($sorted_by) {
+        case SORT_BY_DATE:
+            $selected[SORT_BY_DATE] = 'selected';
+            break;
+        case SORT_BY_TITLE:  
+            $selected[SORT_BY_TITLE] = 'selected'; 
+            break;
+        case SORT_BY_TYPE:
+            $selected[SORT_BY_TYPE] = 'selected';
+            break;
+        case SORT_BY_FAVORIS:
+            $selected[SORT_BY_FAVORIS] = 'selected';
+            break;        
+    }
+
+    // Gestions des options de tri
+    $selected_order = [SORT_ORDER_ASC => '', SORT_ORDER_DESC => ''];
+
+    switch ($sort_order) {
+        case SORT_ORDER_ASC:
+            $selected_order[SORT_ORDER_ASC] = 'selected';
+            break;
+        case SORT_ORDER_DESC:  
+            $selected_order[SORT_ORDER_DESC] = 'selected'; 
+            break;        
+    }
+
+    return array('selected' => $selected, 'selected_order' => $selected_order);
+
+}
+

@@ -201,11 +201,11 @@
         <!-- Affichage des messages -->       
         <?php echo $section_message; ?>
 
-        <!-- Affichage des favoris -->
-        <?php echo $section_favoris ?>
-
         <!-- Affichage des notes -->
         <?php echo $section_notes; ?>
+
+        <!-- Affichage des favoris -->
+        <?php echo $section_favoris ?>
         
     </div><!-- container -->     
     

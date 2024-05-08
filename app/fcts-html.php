@@ -187,6 +187,7 @@ function HTMLViewListNotes($sortedNotes, $sort_note, $sort_order) {
                     $html .= '<a href="index.php?page=view&file='.$note['filename'].'" class="appNoteBox">
                             <div class="row tuileNote" alt="Lire">                            
                                     <div class="col-12">
+                                        '.HTMLAddIconFavorite($note['favoris']).'
                                         <span class="badge text-bg-secondary">'.$note['type'].'</span>                     
                                         <h2 class="mb-3 appMainColor">'.T_LimitString($note['title']).'</h2>
                                         <small>'.$note['date'].'</small>                                                    
@@ -390,46 +391,20 @@ function HTMLFormatNote($type, $note) {
  */
 function HTMLInsertFormSortNote($sorted_by = SORT_BY_DEFAULT, $sort_order = SORT_ORDER_DEFAULT) {
     
-    // Gestion du selected du select
-    $selected = [SORT_BY_DATE => '', SORT_BY_TITLE => '', SORT_BY_TYPE => '', SORT_BY_FAVORIS => ''];
-    switch ($sorted_by) {
-        case SORT_BY_DATE:
-            $selected[SORT_BY_DATE] = 'selected';
-            break;
-        case SORT_BY_TITLE:  
-            $selected[SORT_BY_TITLE] = 'selected'; 
-            break;
-        case SORT_BY_TYPE:
-            $selected[SORT_BY_TYPE] = 'selected';
-            break;
-        case SORT_BY_FAVORIS:
-            $selected[SORT_BY_FAVORIS] = 'selected';
-            break;        
-    }
-
-    // Gestions des options de tri
-    $selected_order = [SORT_ORDER_ASC => '', SORT_ORDER_DESC => ''];
-    switch ($sort_order) {
-        case SORT_ORDER_ASC:
-            $selected_order[SORT_ORDER_ASC] = 'selected';
-            break;
-        case SORT_ORDER_DESC:  
-            $selected_order[SORT_ORDER_DESC] = 'selected'; 
-            break;        
-    }
-    
+    $sort = SORTManager($sorted_by, $sort_order);
+      
     $html = '
     <form id="form_sort_note" method="post">       
         <label for="sort_note" class="label_sort_note">Trier par</label>
         <select name="sort_note" id="sort_note" class="select_sort_note">
-            <option value="'.SORT_BY_DATE.'" '.$selected[SORT_BY_DATE].'>Date</option>
-            <option value="'.SORT_BY_TITLE.'" '.$selected[SORT_BY_TITLE].'>Titre</option>
-            <option value="'.SORT_BY_TYPE.'" '.$selected[SORT_BY_TYPE].'>Type</option>
-            <option value="'.SORT_BY_FAVORIS.'" '.$selected[SORT_BY_FAVORIS].'>Favoris</option>
+            <option value="'.SORT_BY_DATE.'" '.$sort['selected'][SORT_BY_DATE].'>Date</option>
+            <option value="'.SORT_BY_TITLE.'" '.$sort['selected'][SORT_BY_TITLE].'>Titre</option>
+            <option value="'.SORT_BY_TYPE.'" '.$sort['selected'][SORT_BY_TYPE].'>Type</option>
+            <option value="'.SORT_BY_FAVORIS.'" '.$sort['selected'][SORT_BY_FAVORIS].'>Favoris</option>
         </select> 
         <select name="sort_order" id="sort_order" class="select_sort_order">
-            <option value="'.SORT_ORDER_ASC.'" '.$selected_order[SORT_ORDER_ASC].'>Asc</option>
-            <option value="'.SORT_ORDER_DESC.'" '.$selected_order[SORT_ORDER_DESC].'>Desc</option>           
+            <option value="'.SORT_ORDER_ASC.'" '.$sort['selected_order'][SORT_ORDER_ASC].'>Asc</option>
+            <option value="'.SORT_ORDER_DESC.'" '.$sort['selected_order'][SORT_ORDER_DESC].'>Desc</option>           
         </select>               
         <!--<button type="submit" class="btn btn-outline-success">Trier</button>-->
     </form>
@@ -456,3 +431,17 @@ function HTMLInsertFormSearch() {
     
     return $html;
 }
+
+
+/**
+ * Affichage de l'icône favoris
+ * 
+ * @param mixed $favoris 
+ * @return string 
+ */
+function HTMLAddIconFavorite($favoris) {
+    if($favoris == 1)
+        return '<img src="assets/img/favorite.png" alt="favoris">';
+    else
+        return '';
+}   
