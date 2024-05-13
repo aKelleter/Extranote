@@ -96,7 +96,8 @@
             default:
                 // Acquisition et tri des notes            
                 $notes = GETListAllNotes();
-                //DEBUG// T_Printr($notes, 'Notes non triées');
+                //DEBUG// 
+                T_Printr($notes, 'Notes non triées');
                 $sortedNotes = GETNotesSortedBy($notes, $sort_note, $sort_order);
 
                 // Affichages des notes et des favoris
